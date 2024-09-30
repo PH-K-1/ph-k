@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 } else if (itemId == R.id.nav_mypage) {
                     // 마이 페이지 선택 시 처리
-                    Intent intent = new Intent(MainActivity.this, MainActivity.class); // 수정해야함
+                    Intent intent = new Intent(MainActivity.this, MyPageActivity.class); // 수정해야함
                     startActivity(intent);
                     return true;
                 } else if (itemId == R.id.nav_register) {

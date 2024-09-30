@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- 사용자 프로필 이미지 -->
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_home"
+        android:scaleType="centerCrop"
+        android:background="@drawable/circle_background" /> <!-- 원형 배경 -->
+
+    <!-- 사용자 이름 -->
+    <TextView
+        android:id="@+id/tv_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="사용자 이름"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_below="@id/profile_image"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="8dp" />
+
+    <!-- 사용자 이메일 -->
+    <TextView
+        android:id="@+id/tv_user_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="user@example.com"
+        android:textSize="16sp"
+        android:layout_below="@id/tv_user_name"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="24dp" />
+
+    <!-- 프로필 수정 버튼 -->
+    <Button
+        android:id="@+id/btn_edit_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="프로필 수정"
+        android:layout_below="@id/tv_user_email"
+        android:layout_marginBottom="16dp" />
+
+    <!-- 로그아웃 버튼 -->
+    <Button
+        android:id="@+id/btn_logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="로그아웃"/>
+
+</RelativeLayout>
