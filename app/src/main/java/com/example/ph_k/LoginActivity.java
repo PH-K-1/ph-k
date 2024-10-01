@@ -3,18 +3,17 @@ package com.example.ph_k;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.widget.Toolbar;
-import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import androidx.drawerlayout.widget.DrawerLayout;
 
-public class MyPageActivity extends AppCompatActivity {
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
+
+public class LoginActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -24,7 +23,7 @@ public class MyPageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_page);
+        setContentView(R.layout.activity_login); // XML 레이아웃 설정
 
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navigationView);
@@ -43,45 +42,22 @@ public class MyPageActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        // 회원가입 버튼 클릭 리스너 추가
-        Button registerButton = findViewById(R.id.btn_signup);
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MyPageActivity.this, RegisterActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        // 로그인 버튼 클릭 리스너 추가
-        Button loginButton = findViewById(R.id.btn_login);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MyPageActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
-        });
-
-
         // 네비게이션 아이템 선택 리스너
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
                 if (itemId == R.id.nav_home) {
-                    Intent intent = new Intent(MyPageActivity.this, MainActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
                     // 홈 선택 시 처리
                     return true;
                 } else if (itemId == R.id.nav_register) {
-                    // 등록 선택 시 처리
-                    Intent intent = new Intent(MyPageActivity.this, MainActivity.class); // 수정해야함
-                    startActivity(intent);
+                    // 이미 로그인 화면에 있으므로 처리하지 않음
                     return true;
                 } else if (itemId == R.id.nav_mypage) {
                     // 마이 페이지 선택 시 처리
-                    Intent intent = new Intent(MyPageActivity.this, MyPageActivity.class); // 수정해야함
+                    Intent intent = new Intent(LoginActivity.this, MyPageActivity.class);
                     startActivity(intent);
                     return true;
                 }
@@ -96,19 +72,17 @@ public class MyPageActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
                 if (itemId == R.id.nav_home) {
-                    Intent intent = new Intent(MyPageActivity.this, MainActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
                     // 홈 선택 시 처리
                     return true;
                 } else if (itemId == R.id.nav_mypage) {
                     // 마이 페이지 선택 시 처리
-                    Intent intent = new Intent(MyPageActivity.this, MyPageActivity.class); // 현재 액티비티 그대로 사용
+                    Intent intent = new Intent(LoginActivity.this, MyPageActivity.class);
                     startActivity(intent);
                     return true;
-                } else if (itemId == R.id.nav_register) {
-                    // 등록 선택 시 처리
-                    Intent intent = new Intent(MyPageActivity.this, MainActivity.class); // 수정해야함
-                    startActivity(intent);
+                } else if (itemId == R.id.nav_register){
+                    // 이미 로그인 화면에 있으므로 처리하지 않음
                     return true;
                 }
                 return false;

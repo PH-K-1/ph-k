@@ -32,49 +32,29 @@
                 android:orientation="vertical"
                 android:gravity="center_horizontal">
 
-                <!-- 사용자 프로필 이미지 -->
-                <ImageView
-                    android:id="@+id/profile_image"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_marginBottom="16dp"
-                    android:src="@drawable/ic_home"
-                    android:scaleType="centerCrop"
-                    android:background="@drawable/circle_background" /> <!-- 원형 배경 -->
-
-                <!-- 사용자 이름 -->
-                <TextView
-                    android:id="@+id/tv_user_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="사용자 이름"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
-
-                <!-- 사용자 이메일 -->
-                <TextView
-                    android:id="@+id/tv_user_email"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="user@example.com"
-                    android:textSize="16sp"
-                    android:layout_marginBottom="24dp" />
-
-
-                <Button
-                    android:id="@+id/btn_signup"
+                <!-- ID 입력 -->
+                <EditText
+                    android:id="@+id/et_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="회원가입"
-                    android:layout_marginBottom="16dp" />
+                    android:hint="ID 입력"
+                    android:inputType="text" />
 
+                <!-- 비밀번호 입력 -->
+                <EditText
+                    android:id="@+id/et_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="비밀번호 입력"
+                    android:inputType="textPassword" />
 
+                <!-- 로그인 버튼 -->
                 <Button
                     android:id="@+id/btn_login"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="로그인" />
+                    android:text="로그인"
+                    android:layout_marginTop="16dp" />
             </LinearLayout>
         </ScrollView>
 
