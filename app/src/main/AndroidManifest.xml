@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Phk"
+        android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
@@ -24,6 +25,9 @@
         <activity android:name=".MyPageActivity" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginActivity" />
+
     </application>
+    <uses-permission android:name="android.permission.INTERNET" />
+
 
 </manifest>
