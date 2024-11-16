@@ -25,6 +25,7 @@
         <activity android:name=".MyPageActivity" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginActivity" />
+        <activity android:name=".ChatActivity" />
 
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
