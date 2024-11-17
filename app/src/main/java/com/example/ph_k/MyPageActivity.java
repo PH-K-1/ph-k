@@ -111,6 +111,7 @@ public class MyPageActivity extends AppCompatActivity {
                     startActivity(intent);
                     return true;
                 }
+
                 return false;
             }
         });

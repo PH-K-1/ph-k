@@ -2,100 +2,55 @@ package com.example.ph_k;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
-    private BottomNavigationView bottomNavigationView;
-    private ActionBarDrawerToggle toggle;
+    private EditText emailEditText, passwordEditText;
+    private Button loginButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login); // XML 레이아웃 설정
+        setContentView(R.layout.activity_login);
 
-        drawerLayout = findViewById(R.id.drawerLayout);
-        navigationView = findViewById(R.id.navigationView);
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        emailEditText = findViewById(R.id.email);
+        passwordEditText = findViewById(R.id.password);
+        loginButton = findViewById(R.id.loginButton);
 
-        setSupportActionBar(toolbar);
+        loginButton.setOnClickListener(v -> {
+            String email = emailEditText.getText().toString();
+            String password = passwordEditText.getText().toString();
 
-        // ActionBarDrawerToggle 설정
-        toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar,
-                R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close
-        );
+            User user = new User(null, email, password);
 
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
-        // 네비게이션 아이템 선택 리스너
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int itemId = item.getItemId();
-                if (itemId == R.id.nav_home) {
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    // 홈 선택 시 처리
-                    return true;
-                } else if (itemId == R.id.nav_register) {
-                    // 이미 로그인 화면에 있으므로 처리하지 않음
-                    return true;
-                } else if (itemId == R.id.nav_mypage) {
-                    // 마이 페이지 선택 시 처리
-                    Intent intent = new Intent(LoginActivity.this, MyPageActivity.class);
-                    startActivity(intent);
-                    return true;
+            ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+            Call<String> call = apiService.loginUser(user);
+            call.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response.isSuccessful()) {
+                        // 로그인 성공 시 메인 액티비티로 이동
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish(); // 현재 LoginActivity 종료
+                        Toast.makeText(LoginActivity.this, "로그인 성공", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(LoginActivity.this, "이메일 또는 비밀번호가 일치하지 않습니다", Toast.LENGTH_SHORT).show();
+                    }
                 }
-                drawerLayout.closeDrawers(); // 드로어 닫기
-                return false;
-            }
-        });
 
-        // 하단 네비게이션 뷰 선택 리스너
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int itemId = item.getItemId();
-                if (itemId == R.id.nav_home) {
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    // 홈 선택 시 처리
-                    return true;
-                } else if (itemId == R.id.nav_mypage) {
-                    // 마이 페이지 선택 시 처리
-                    Intent intent = new Intent(LoginActivity.this, MyPageActivity.class);
-                    startActivity(intent);
-                    return true;
-                } else if (itemId == R.id.nav_register){
-                    // 이미 로그인 화면에 있으므로 처리하지 않음
-                    return true;
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    Toast.makeText(LoginActivity.this, "서버 연결 실패", Toast.LENGTH_SHORT).show();
                 }
-                return false;
-            }
+            });
         });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // 토글 버튼 클릭 시 드로어 열고 닫기
-        if (toggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }
