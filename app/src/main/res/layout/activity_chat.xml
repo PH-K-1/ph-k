@@ -4,26 +4,31 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <!-- 메시지 출력 영역 -->
     <TextView
-        android:id="@+id/chatTextView"
+        android:id="@+id/messageDisplay"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:text="채팅 메시지 표시"
         android:padding="16dp"
+        android:textSize="16sp"
         android:scrollbars="vertical" />
 
+    <!-- 메시지 입력 필드 -->
     <EditText
-        android:id="@+id/messageEditText"
+        android:id="@+id/messageInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="메시지를 입력하세요"
-        android:padding="16dp" />
+        android:padding="16dp"
+        android:inputType="text" />
 
+    <!-- 보내기 버튼 -->
     <Button
         android:id="@+id/sendButton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="보내기"
-        android:layout_gravity="center"
-        android:padding="16dp" />
+        android:onClick="sendMessage" />
 </LinearLayout>
