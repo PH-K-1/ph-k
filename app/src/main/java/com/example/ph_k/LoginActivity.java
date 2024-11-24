@@ -1,8 +1,8 @@
 package com.example.ph_k;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
+import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,45 +12,39 @@ import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText emailEditText, passwordEditText;
-    private Button loginButton;
+    EditText usernameEditText, passwordEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        emailEditText = findViewById(R.id.email);
-        passwordEditText = findViewById(R.id.password);
-        loginButton = findViewById(R.id.loginButton);
+        usernameEditText = findViewById(R.id.usernameEditText);
+        passwordEditText = findViewById(R.id.passwordEditText);
+    }
 
-        loginButton.setOnClickListener(v -> {
-            String email = emailEditText.getText().toString();
-            String password = passwordEditText.getText().toString();
+    public void onLoginClick(View view) {
+        String username = usernameEditText.getText().toString();
+        String password = passwordEditText.getText().toString();
 
-            User user = new User(null, email, password);
+        LoginRequest loginRequest = new LoginRequest(username, password);
+        ApiService apiService = RetrofitClient.getRetrofitInstance().create(ApiService.class);
 
-            ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
-            Call<String> call = apiService.loginUser(user);
-            call.enqueue(new Callback<String>() {
-                @Override
-                public void onResponse(Call<String> call, Response<String> response) {
-                    if (response.isSuccessful()) {
-                        // 로그인 성공 시 메인 액티비티로 이동
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish(); // 현재 LoginActivity 종료
-                        Toast.makeText(LoginActivity.this, "로그인 성공", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(LoginActivity.this, "이메일 또는 비밀번호가 일치하지 않습니다", Toast.LENGTH_SHORT).show();
-                    }
+        apiService.loginUser(loginRequest).enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(LoginActivity.this, "로그인 성공", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(LoginActivity.this, "로그인 실패", Toast.LENGTH_SHORT).show();
                 }
+            }
 
-                @Override
-                public void onFailure(Call<String> call, Throwable t) {
-                    Toast.makeText(LoginActivity.this, "서버 연결 실패", Toast.LENGTH_SHORT).show();
-                }
-            });
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                Log.e("LoginActivity", "Error: " + t.getMessage());
+                Toast.makeText(LoginActivity.this, "서버 연결 실패", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 }
