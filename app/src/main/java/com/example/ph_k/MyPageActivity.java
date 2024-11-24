@@ -1,18 +1,21 @@
 package com.example.ph_k;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.widget.Toolbar;
-import com.google.android.material.navigation.NavigationView;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 
 public class MyPageActivity extends AppCompatActivity {
 
@@ -26,6 +29,20 @@ public class MyPageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_page);
 
+        // 사용자 정보 불러오기
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        String username = sharedPreferences.getString("username", "로그인 안함");
+        String userEmail = sharedPreferences.getString("userEmail", "user@example.com");
+
+        // 사용자 이름을 텍스트뷰에 표시
+        TextView usernameTextView = findViewById(R.id.usernameTextView);
+        usernameTextView.setText(username);
+
+        // 사용자 이메일을 텍스트뷰에 표시
+        TextView userEmailTextView = findViewById(R.id.userEmailTextView);
+        userEmailTextView.setText(userEmail);
+
+        // 네비게이션과 하단 네비게이션 설정
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navigationView);
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
@@ -33,7 +50,6 @@ public class MyPageActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
 
-        // ActionBarDrawerToggle 설정
         toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar,
                 R.string.navigation_drawer_open,
@@ -43,7 +59,7 @@ public class MyPageActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        // 회원가입 버튼 클릭 리스너 추가
+        // 회원가입 버튼 클릭 리스너
         Button registerButton = findViewById(R.id.btn_signup);
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,16 +69,36 @@ public class MyPageActivity extends AppCompatActivity {
             }
         });
 
-        // 로그인 버튼 클릭 리스너 추가
+        // 로그인 버튼 클릭 리스너
         Button loginButton = findViewById(R.id.btn_login);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MyPageActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
-        });
 
+        // 사용자가 로그인 상태라면 로그인 버튼을 '로그아웃'으로 변경
+        if (!username.equals("로그인 안함")) {
+            loginButton.setText("로그아웃");
+            loginButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // 로그아웃 처리
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.clear(); // 저장된 사용자 정보 제거
+                    editor.apply();
+
+                    // 로그아웃 후 로그인 화면으로 이동
+                    Intent intent = new Intent(MyPageActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish(); // 현재 액티비티 종료
+                }
+            });
+        } else {
+            loginButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // 로그인 화면으로 이동
+                    Intent intent = new Intent(MyPageActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
 
         // 네비게이션 아이템 선택 리스너
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -72,20 +108,17 @@ public class MyPageActivity extends AppCompatActivity {
                 if (itemId == R.id.nav_home) {
                     Intent intent = new Intent(MyPageActivity.this, MainActivity.class);
                     startActivity(intent);
-                    // 홈 선택 시 처리
                     return true;
                 } else if (itemId == R.id.nav_register) {
-                    // 등록 선택 시 처리
-                    Intent intent = new Intent(MyPageActivity.this, MainActivity.class); // 수정해야함
+                    Intent intent = new Intent(MyPageActivity.this, MainActivity.class);
                     startActivity(intent);
                     return true;
                 } else if (itemId == R.id.nav_mypage) {
-                    // 마이 페이지 선택 시 처리
-                    Intent intent = new Intent(MyPageActivity.this, MyPageActivity.class); // 수정해야함
+                    Intent intent = new Intent(MyPageActivity.this, MyPageActivity.class);
                     startActivity(intent);
                     return true;
                 }
-                drawerLayout.closeDrawers(); // 드로어 닫기
+                drawerLayout.closeDrawers();
                 return false;
             }
         });
@@ -98,20 +131,16 @@ public class MyPageActivity extends AppCompatActivity {
                 if (itemId == R.id.nav_home) {
                     Intent intent = new Intent(MyPageActivity.this, MainActivity.class);
                     startActivity(intent);
-                    // 홈 선택 시 처리
                     return true;
                 } else if (itemId == R.id.nav_mypage) {
-                    // 마이 페이지 선택 시 처리
-                    Intent intent = new Intent(MyPageActivity.this, MyPageActivity.class); // 현재 액티비티 그대로 사용
+                    Intent intent = new Intent(MyPageActivity.this, MyPageActivity.class);
                     startActivity(intent);
                     return true;
                 } else if (itemId == R.id.nav_register) {
-                    // 등록 선택 시 처리
-                    Intent intent = new Intent(MyPageActivity.this, MainActivity.class); // 수정해야함
+                    Intent intent = new Intent(MyPageActivity.this, MainActivity.class);
                     startActivity(intent);
                     return true;
                 }
-
                 return false;
             }
         });
@@ -119,7 +148,6 @@ public class MyPageActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // 토글 버튼 클릭 시 드로어 열고 닫기
         if (toggle.onOptionsItemSelected(item)) {
             return true;
         }

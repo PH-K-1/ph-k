@@ -44,7 +44,7 @@
 
                 <!-- 사용자 이름 -->
                 <TextView
-                    android:id="@+id/tv_user_name"
+                    android:id="@+id/usernameTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="사용자 이름"
@@ -54,13 +54,12 @@
 
                 <!-- 사용자 이메일 -->
                 <TextView
-                    android:id="@+id/tv_user_email"
+                    android:id="@+id/userEmailTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="user@example.com"
                     android:textSize="16sp"
                     android:layout_marginBottom="24dp" />
-
 
                 <Button
                     android:id="@+id/btn_signup"
@@ -68,7 +67,6 @@
                     android:layout_height="wrap_content"
                     android:text="회원가입"
                     android:layout_marginBottom="16dp" />
-
 
                 <Button
                     android:id="@+id/btn_login"
@@ -92,6 +90,6 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:menu="@menu/drawer_menu" />  <!-- 드로어 메뉴 설정 -->
+        app:menu="@menu/drawer_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
