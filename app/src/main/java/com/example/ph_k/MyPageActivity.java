@@ -20,8 +20,6 @@ import com.google.android.material.navigation.NavigationView;
 public class MyPageActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
-    private BottomNavigationView bottomNavigationView;
     private ActionBarDrawerToggle toggle;
 
     @Override
@@ -39,8 +37,8 @@ public class MyPageActivity extends AppCompatActivity {
 
         // 네비게이션과 하단 네비게이션 설정
         drawerLayout = findViewById(R.id.drawerLayout);
-        navigationView = findViewById(R.id.navigationView);
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        NavigationView navigationView = findViewById(R.id.navigationView);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         Toolbar toolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
