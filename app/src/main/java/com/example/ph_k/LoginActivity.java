@@ -36,9 +36,11 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
+        // 로그인 요청 객체 생성
         LoginRequest loginRequest = new LoginRequest(username, password);
         ApiService apiService = RetrofitClient.getRetrofitInstance().create(ApiService.class);
 
+        // 로그인 API 호출
         apiService.loginUser(loginRequest).enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
@@ -46,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
                     // 로그인 성공 시 SharedPreferences에 사용자 정보 저장
                     SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("username", username); // 사용자 이름 저장
+                    editor.putString("username", username);  // 사용자 이름 저장
                     editor.apply();
 
                     Toast.makeText(LoginActivity.this, "로그인 성공", Toast.LENGTH_SHORT).show();
@@ -56,13 +58,14 @@ public class LoginActivity extends AppCompatActivity {
                     startActivity(intent);
                     finish(); // 로그인 후 현재 액티비티 종료
                 } else {
+                    // 로그인 실패 시 메시지 처리
                     Toast.makeText(LoginActivity.this, "로그인 실패: " + response.message(), Toast.LENGTH_SHORT).show();
-                    Log.e("LoginActivity", "로그인 실패: " + response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
+                // 네트워크 실패 처리
                 Log.e("LoginActivity", "Error: " + t.getMessage());
                 Toast.makeText(LoginActivity.this, "서버 연결 실패", Toast.LENGTH_SHORT).show();
             }

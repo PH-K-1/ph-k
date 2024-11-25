@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="ExtraText">
 
     <application
         android:allowBackup="true"
@@ -14,22 +15,25 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            tools:ignore="WrongManifestParent">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MyPageActivity" />
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".ChatActivity" />
+
+        <activity android:name=".MyPageActivity" tools:ignore="WrongManifestParent" />
+        <activity android:name=".RegisterActivity" tools:ignore="WrongManifestParent" />
+        <activity android:name=".LoginActivity" tools:ignore="WrongManifestParent" />
+        <activity android:name=".ChatActivity" tools:ignore="WrongManifestParent" />
 
     </application>
-    <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- 인터넷 권한 추가 -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>
