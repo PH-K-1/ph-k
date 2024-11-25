@@ -31,16 +31,11 @@ public class MyPageActivity extends AppCompatActivity {
 
         // 사용자 정보 불러오기
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-        String username = sharedPreferences.getString("username", "로그인 안함");
-        String userEmail = sharedPreferences.getString("userEmail", "user@example.com");
+        String username = sharedPreferences.getString("username", "host");
 
         // 사용자 이름을 텍스트뷰에 표시
         TextView usernameTextView = findViewById(R.id.usernameTextView);
         usernameTextView.setText(username);
-
-        // 사용자 이메일을 텍스트뷰에 표시
-        TextView userEmailTextView = findViewById(R.id.userEmailTextView);
-        userEmailTextView.setText(userEmail);
 
         // 네비게이션과 하단 네비게이션 설정
         drawerLayout = findViewById(R.id.drawerLayout);
