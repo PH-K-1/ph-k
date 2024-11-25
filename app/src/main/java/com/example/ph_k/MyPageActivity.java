@@ -68,7 +68,7 @@ public class MyPageActivity extends AppCompatActivity {
         Button loginButton = findViewById(R.id.btn_login);
 
         // 사용자가 로그인 상태라면 로그인 버튼을 '로그아웃'으로 변경
-        if (!username.equals("로그인 안함")) {
+        if (!username.equals("host")) {
             loginButton.setText("로그아웃");
             loginButton.setOnClickListener(new View.OnClickListener() {
                 @Override
