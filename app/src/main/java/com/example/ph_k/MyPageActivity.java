@@ -77,7 +77,7 @@ public class MyPageActivity extends AppCompatActivity {
                     editor.apply();
 
                     // 로그아웃 후 로그인 화면으로 이동
-                    Intent intent = new Intent(MyPageActivity.this, LoginActivity.class);
+                    Intent intent = new Intent(MyPageActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish(); // 현재 액티비티 종료
                 }

@@ -26,10 +26,10 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MyPageActivity" tools:ignore="WrongManifestParent" />
-        <activity android:name=".RegisterActivity" tools:ignore="WrongManifestParent" />
-        <activity android:name=".LoginActivity" tools:ignore="WrongManifestParent" />
-        <activity android:name=".ChatActivity" tools:ignore="WrongManifestParent" />
+        <activity android:name=".MyPageActivity" android:exported="true" tools:ignore="WrongManifestParent" />
+        <activity android:name=".RegisterActivity" android:exported="true" tools:ignore="WrongManifestParent" />
+        <activity android:name=".LoginActivity" android:exported="true" tools:ignore="WrongManifestParent" />
+        <activity android:name=".ChatActivity" android:exported="true" tools:ignore="WrongManifestParent" />
 
     </application>
 
