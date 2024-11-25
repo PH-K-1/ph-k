@@ -5,10 +5,9 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 public interface ApiService {
-
-    @POST("/register") // 회원가입 API
-    Call<RegisterResponse> registerUser(@Body RegisterRequest registerRequest);
-
-    @POST("/login") // 로그인 API
+    @POST("login")
     Call<LoginResponse> loginUser(@Body LoginRequest loginRequest);
+
+    @POST("register")
+    Call<RegisterResponse> registerUser(@Body RegisterRequest registerRequest);
 }
