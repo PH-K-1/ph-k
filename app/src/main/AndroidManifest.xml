@@ -30,7 +30,10 @@
         <activity android:name=".RegisterActivity" android:exported="true" tools:ignore="WrongManifestParent" />
         <activity android:name=".LoginActivity" android:exported="true" tools:ignore="WrongManifestParent" />
         <activity android:name=".ChatActivity" android:exported="true" tools:ignore="WrongManifestParent" />
-
+        <activity android:name=".RegisterActivity1" android:exported="true" tools:ignore="WrongManifestParent" />
+        <activity android:name=".BoardActivity" android:exported="true" tools:ignore="WrongManifestParent" />
+        <activity android:name=".ItemDetailActivity" android:exported="true" tools:ignore="WrongManifestParent" />
+        <activity android:name=".ListActivity" android:exported="true" tools:ignore="WrongManifestParent" />
     </application>
 
     <!-- 인터넷 권한 추가 -->

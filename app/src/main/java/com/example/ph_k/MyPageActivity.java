@@ -102,7 +102,7 @@ public class MyPageActivity extends AppCompatActivity {
                     Intent intent = new Intent(MyPageActivity.this, MainActivity.class);
                     startActivity(intent);
                     return true;
-                } else if (itemId == R.id.nav_register) {
+                } else if (itemId == R.id.nav_mypage) {
                     Intent intent = new Intent(MyPageActivity.this, MainActivity.class);
                     startActivity(intent);
                     return true;
@@ -129,7 +129,7 @@ public class MyPageActivity extends AppCompatActivity {
                     Intent intent = new Intent(MyPageActivity.this, MyPageActivity.class);
                     startActivity(intent);
                     return true;
-                } else if (itemId == R.id.nav_register) {
+                } else if (itemId == R.id.nav_mypage) {
                     Intent intent = new Intent(MyPageActivity.this, MainActivity.class);
                     startActivity(intent);
                     return true;
