@@ -92,41 +92,22 @@ def upload_item():
         print("Upload Error:", str(e))  # 서버 로그에 출력
         return jsonify({"message": "등록 실패", "error": str(e)}), 400
 
-# 정적 파일 경로 설정
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.add_url_rule('/uploads/<filename>', endpoint='uploads', view_func=app.send_from_directory(UPLOAD_FOLDER))
-
-@app.route('/upload', methods=['POST'])
-def upload_item():
+@app.route('/get_items', methods=['GET'])
+def get_items():
     try:
-        title = request.form['title']
-        description = request.form['description']
-        price = request.form['price']
-        image = request.files['image']
-
-        # 이미지 저장
-        image_path = os.path.join(UPLOAD_FOLDER, image.filename)
-        image.save(image_path)
-
-        # MySQL 연결 확인 및 재연결
         global connection
         if not connection.is_connected():
-            connection.close()  # 기존 연결 닫기
-            connection = create_connection()  # 새 연결 생성
+            connection.close()
+            connection = create_connection()
 
-        # 데이터베이스 저장
-        cursor = connection.cursor()
-        query = """
-        INSERT INTO items (title, description, price, image_path) 
-        VALUES (%s, %s, %s, %s)
-        """
-        cursor.execute(query, (title, description, price, image.filename))  # 데이터베이스에는 파일명만 저장
-        connection.commit()
+        cursor = connection.cursor(dictionary=True)
+        query = "SELECT id, title, description, price, image_path FROM items"
+        cursor.execute(query)
+        items = cursor.fetchall()
 
-        return jsonify({"message": "등록 성공"}), 201
+        return jsonify({"items": items}), 200
     except Exception as e:
-        print("Upload Error:", str(e))  # 서버 로그에 출력
-        return jsonify({"message": "등록 실패", "error": str(e)}), 400
+        return jsonify({"message": "게시글 조회 실패", "error": str(e)}), 400
 
 
 if __name__ == '__main__':
