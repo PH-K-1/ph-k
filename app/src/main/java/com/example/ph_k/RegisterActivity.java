@@ -44,7 +44,7 @@ public class RegisterActivity extends AppCompatActivity {
         String username = usernameEditText.getText().toString();
         String password = passwordEditText.getText().toString();
 
-        String url = "http://192.168.200.114:5000/register";  // 서버 URL
+        String url = "http://192.168.200.114:7310/register";  // 서버 URL
 
         // JSON 객체 생성
         JSONObject jsonParams = new JSONObject();
@@ -60,7 +60,7 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         // 서버에서 반환된 응답 처리
-                        Toast.makeText(RegisterActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterActivity.this, "회원가입에 성공했습니다.", Toast.LENGTH_SHORT).show();
                         finish();  // 회원가입 성공 후 로그인 화면으로 돌아가기
                     }
                 },

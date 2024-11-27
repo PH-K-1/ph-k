@@ -5,21 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- 전체 레이아웃을 LinearLayout으로 구성하여 상단부터 차례로 배치 -->
+    <!-- 전체 레이아웃 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/background_color">
 
-        <!-- Toolbar는 상단에 배치 -->
+        <!-- 툴바 -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            android:title="My Profile"
+            android:titleTextColor="@android:color/white"/>
 
-        <!-- 콘텐츠 부분을 ScrollView로 감싸서 스크롤 가능하게 처리 -->
+        <!-- 콘텐츠 부분 -->
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -32,53 +36,71 @@
                 android:orientation="vertical"
                 android:gravity="center_horizontal">
 
-                <!-- 사용자 프로필 이미지 -->
-                <ImageView
-                    android:id="@+id/profile_image"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                <!-- 프로필 카드 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    android:backgroundTint="@color/card_background"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="6dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center_horizontal"
+                        android:padding="16dp">
+
+                        <!-- 프로필 이미지 -->
+                        <ImageView
+                            android:id="@+id/profile_image"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:src="@drawable/ic_profile"
+                            android:contentDescription="Profile Image"
+                            android:scaleType="centerCrop"
+                            android:background="@drawable/circle_background" />
+
+                        <!-- 사용자 이름 -->
+                        <TextView
+                            android:id="@+id/usernameTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="사용자 이름"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/primary_text"
+                            android:layout_marginTop="16dp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 로그인 버튼 -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="로그인"
                     android:layout_marginBottom="16dp"
-                    android:src="@drawable/ic_home"
-                    android:scaleType="centerCrop"
-                    android:background="@drawable/circle_background" /> <!-- 원형 배경 -->
+                    app:cornerRadius="12dp"
+                    android:backgroundTint="#8ACBFD"
+                    android:textColor="@android:color/white" />
 
-                <!-- 사용자 이름 -->
-                <TextView
-                    android:id="@+id/tv_user_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="사용자 이름"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
-
-                <!-- 사용자 이메일 -->
-                <TextView
-                    android:id="@+id/tv_user_email"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="user@example.com"
-                    android:textSize="16sp"
-                    android:layout_marginBottom="24dp" />
-
-
-                <Button
+                <!-- 회원가입 버튼 -->
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_signup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="회원가입"
-                    android:layout_marginBottom="16dp" />
+                    android:backgroundTint="#8ACBFD"
+                    app:cornerRadius="12dp"
+                    android:textColor="@android:color/white" />
 
 
-                <Button
-                    android:id="@+id/btn_login"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="로그인" />
             </LinearLayout>
         </ScrollView>
 
-        <!-- 하단 네비게이션 메뉴 -->
+        <!-- 하단 네비게이션 -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigationView"
             android:layout_width="match_parent"
@@ -86,12 +108,11 @@
             app:menu="@menu/bottom_navigation_menu" />
     </LinearLayout>
 
-    <!-- NavigationView for Drawer -->
+    <!-- 드로어 메뉴 -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:menu="@menu/drawer_menu" />  <!-- 드로어 메뉴 설정 -->
-
+        app:menu="@menu/drawer_menu" />
 </androidx.drawerlayout.widget.DrawerLayout>

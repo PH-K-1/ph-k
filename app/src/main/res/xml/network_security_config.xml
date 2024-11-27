@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <!-- 192.168.0.216 주소에서 cleartext traffic을 허용 -->
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">192.168.200.114</domain>
     </domain-config>
