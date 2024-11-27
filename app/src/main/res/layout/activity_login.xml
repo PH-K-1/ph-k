@@ -1,28 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:gravity="center"
+    android:padding="24dp"
+    android:background="@color/background_color"
+    tools:context=".LoginActivity">
 
-    <EditText
-        android:id="@+id/usernameEditText"
+    <!-- Username Input Field -->
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Username"
-        android:inputType="text" />
+        android:hint="아이디"
+        app:boxStrokeColor="@color/primary_color"
+        app:boxBackgroundMode="outline">
 
-    <EditText
-        android:id="@+id/passwordEditText"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/usernameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Spacing -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="16dp" />
+
+    <!-- Password Input Field -->
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Password"
-        android:inputType="textPassword" />
+        android:hint="비밀번호"
+        app:boxStrokeColor="@color/primary_color"
+        app:boxBackgroundMode="outline">
 
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/passwordEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Spacing -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="24dp" />
+
+    <!-- Login Button -->
     <Button
-        android:layout_width="wrap_content"
+        android:id="@+id/loginButton"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="#1E88E5"
         android:text="Login"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        app:cornerRadius="16dp"
+        app:strokeWidth="2dp"
+        app:strokeColor="#64B5F6"
         android:onClick="onLoginClick" />
-
 </LinearLayout>
