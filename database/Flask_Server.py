@@ -1,7 +1,9 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+from flask import Flask, request, jsonify, send_from_directory
+from flask_cors import CORS, cross_origin
 import mysql.connector
 import os
+import uuid  # 고유 ID 생성
+from datetime import datetime  # 현재 시간 사용
 
 app = Flask(__name__)
 CORS(app)  # CORS 설정
@@ -18,8 +20,9 @@ def create_connection():
 connection = create_connection()
 
 # 이미지 저장 경로 설정
-UPLOAD_FOLDER = './uploads'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # uploads 디렉토리 없으면 생성
+UPLOAD_FOLDER = './static/upload'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # upload 디렉토리 없으면 생성
 
 
 @app.route('/register', methods=['POST'])
@@ -69,8 +72,12 @@ def upload_item():
         price = request.form['price']
         image = request.files['image']
 
+        # 고유한 파일 이름 생성
+        extension = os.path.splitext(image.filename)[1]  # 파일 확장자 추출
+        unique_filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{uuid.uuid4().hex}{extension}"
+        image_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+
         # 이미지 저장
-        image_path = os.path.join(UPLOAD_FOLDER, image.filename)
         image.save(image_path)
 
         # MySQL 연결 확인 및 재연결
@@ -105,9 +112,20 @@ def get_items():
         cursor.execute(query)
         items = cursor.fetchall()
 
+        # 이미지를 클라이언트가 접근할 수 있도록 절대 경로 제공
+        for item in items:
+            item['image_url'] = f'http://192.168.200.114:7310/static/upload/{os.path.basename(item["image_path"])}'
+
         return jsonify({"items": items}), 200
     except Exception as e:
         return jsonify({"message": "게시글 조회 실패", "error": str(e)}), 400
+
+
+# 이미지 제공 경로
+@app.route('/static/upload/<filename>')
+@cross_origin()  # CORS 적용
+def serve_image(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
 if __name__ == '__main__':
