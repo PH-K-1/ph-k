@@ -48,6 +48,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 .into(holder.image);
     }
 
+
+
     @Override
     public int getItemCount() {
         return itemList.size();

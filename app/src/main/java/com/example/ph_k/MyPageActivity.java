@@ -57,7 +57,7 @@ public class MyPageActivity extends AppCompatActivity {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MyPageActivity.this, RegisterActivity.class);
+                Intent intent = new Intent(MyPageActivity.this, SignupActivity.class);
                 startActivity(intent);
             }
         });
@@ -125,12 +125,17 @@ public class MyPageActivity extends AppCompatActivity {
                     Intent intent = new Intent(MyPageActivity.this, MainActivity.class);
                     startActivity(intent);
                     return true;
-                } else if (itemId == R.id.nav_mypage) {
-                    Intent intent = new Intent(MyPageActivity.this, MyPageActivity.class);
+                } else if (itemId == R.id.nav_register) {
+                    Intent intent = new Intent(MyPageActivity.this, RegisterActivity.class);
                     startActivity(intent);
                     return true;
-                } else if (itemId == R.id.nav_mypage) {
-                    Intent intent = new Intent(MyPageActivity.this, MainActivity.class);
+                } else if (itemId == R.id.nav_border) {
+                    Intent intent = new Intent(MyPageActivity.this, BoardActivity.class);
+                    startActivity(intent);
+                    return true;
+                }
+                else if (itemId == R.id.nav_mypage) {
+                    Intent intent = new Intent(MyPageActivity.this, MyPageActivity.class);
                     startActivity(intent);
                     return true;
                 }

@@ -1,6 +1,6 @@
 package com.example.ph_k;
 
-public class RegisterResponse {
+public class SignupResponse {
     private String message;
 
     public String getMessage() {

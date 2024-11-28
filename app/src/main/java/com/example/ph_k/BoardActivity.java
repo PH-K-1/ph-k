@@ -1,23 +1,26 @@
 package com.example.ph_k;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.widget.Toolbar;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,11 +30,75 @@ public class BoardActivity extends AppCompatActivity {
     private List<Item> itemList;
     private static final String URL = "http://192.168.200.114:7310/get_items";
 
+    // 드로어 관련 변수
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private BottomNavigationView bottomNavigationView;
+    private ActionBarDrawerToggle toggle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
 
+        // 드로어와 하단 네비게이션 설정
+        drawerLayout = findViewById(R.id.drawerLayout);
+        navigationView = findViewById(R.id.navigationView);
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
+
+        // ActionBarDrawerToggle 설정
+        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        // 네비게이션 아이템 선택 리스너
+        navigationView.setNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                Intent intent = new Intent(BoardActivity.this, MainActivity.class);
+                startActivity(intent);
+                return true;
+            } else if (itemId == R.id.nav_register) {
+                Intent intent = new Intent(BoardActivity.this, RegisterActivity.class);
+                startActivity(intent);
+                return true;
+            } else if (itemId == R.id.nav_mypage) {
+                Intent intent = new Intent(BoardActivity.this, MyPageActivity.class);
+                startActivity(intent);
+                return true;
+            }
+            drawerLayout.closeDrawers();
+            return false;
+        });
+
+        // 하단 네비게이션 아이템 선택 리스너
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                Intent intent = new Intent(BoardActivity.this, MainActivity.class);
+                startActivity(intent);
+                return true;
+            } else if (itemId == R.id.nav_register) {
+                Intent intent = new Intent(BoardActivity.this, RegisterActivity.class);
+                startActivity(intent);
+                return true;
+            } else if (itemId == R.id.nav_border) {
+                Intent intent = new Intent(BoardActivity.this, BoardActivity.class);
+                startActivity(intent);
+                return true;
+            } else if (itemId == R.id.nav_mypage) {
+                Intent intent = new Intent(BoardActivity.this, MyPageActivity.class);
+                startActivity(intent);
+                return true;
+            }
+            return false;
+        });
+
+        // RecyclerView 설정
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 

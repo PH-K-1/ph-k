@@ -5,7 +5,7 @@
         android:icon="@drawable/ic_home"
         android:title="홈" />
     <item
-        android:id="@+id/nav_register1"
+        android:id="@+id/nav_register"
         android:icon="@drawable/register"
         android:title="등록" />
     <item

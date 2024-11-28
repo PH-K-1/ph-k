@@ -7,12 +7,19 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.widget.Toolbar;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.ByteArrayOutputStream;
 
@@ -23,16 +30,23 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class RegisterActivity extends Activity {
+public class RegisterActivity extends AppCompatActivity {
     private static final int IMAGE_PICK_CODE = 1000;
     private ImageView imagePreview;
     private Uri imageUri;
+
+    // 드로어 및 하단 네비게이션 관련 변수들
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private BottomNavigationView bottomNavigationView;
+    private ActionBarDrawerToggle toggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        // 뷰 설정
         imagePreview = findViewById(R.id.image_preview);
         EditText editTitle = findViewById(R.id.edit_title);
         EditText editDescription = findViewById(R.id.edit_description);
@@ -40,7 +54,68 @@ public class RegisterActivity extends Activity {
         Button buttonUploadImage = findViewById(R.id.button_upload_image);
         Button buttonRegister = findViewById(R.id.button_register);
 
+        // 드로어 및 하단 네비게이션 설정
+        drawerLayout = findViewById(R.id.drawerLayout);
+        navigationView = findViewById(R.id.navigationView);
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
+
+        // ActionBarDrawerToggle 설정
+        toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close
+        );
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        // 네비게이션 아이템 선택 리스너
+        navigationView.setNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                startActivity(intent);
+                return true;
+            } else if (itemId == R.id.nav_register) {
+                // 현재 RegisterActivity이므로 아무 일도 일어나지 않음
+                return true;
+            } else if (itemId == R.id.nav_mypage) {
+                Intent intent = new Intent(RegisterActivity.this, MyPageActivity.class);
+                startActivity(intent);
+                return true;
+            }
+            drawerLayout.closeDrawers(); // 드로어 닫기
+            return false;
+        });
+
+        // 하단 네비게이션 뷰 선택 리스너
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                startActivity(intent);
+                return true;
+            } else if (itemId == R.id.nav_register) {
+                // 현재 RegisterActivity이므로 아무 일도 일어나지 않음
+                return true;
+            } else if (itemId == R.id.nav_border) {
+                Intent intent = new Intent(RegisterActivity.this, BoardActivity.class);
+                startActivity(intent);
+                return true;
+            } else if (itemId == R.id.nav_mypage) {
+                Intent intent = new Intent(RegisterActivity.this, MyPageActivity.class);
+                startActivity(intent);
+                return true;
+            }
+            return false;
+        });
+
+        // 이미지 업로드 버튼 클릭 리스너
         buttonUploadImage.setOnClickListener(v -> pickImage());
+
+        // 등록 버튼 클릭 리스너
         buttonRegister.setOnClickListener(v -> {
             String title = editTitle.getText().toString();
             String description = editDescription.getText().toString();
@@ -65,7 +140,7 @@ public class RegisterActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == IMAGE_PICK_CODE) {
             imageUri = data.getData();
-            imagePreview.setImageURI(imageUri);
+            imagePreview.setImageURI(imageUri); // 선택한 이미지 미리보기
         }
     }
 
@@ -99,6 +174,10 @@ public class RegisterActivity extends Activity {
                 runOnUiThread(() -> {
                     if (response.isSuccessful()) {
                         Toast.makeText(this, "등록 성공", Toast.LENGTH_SHORT).show();
+                        // 등록 성공 후 BoardActivity로 이동
+                        Intent intent = new Intent(RegisterActivity.this, BoardActivity.class);
+                        startActivity(intent); // BoardActivity로 이동
+                        finish(); // 현재 Activity 종료
                     } else {
                         Toast.makeText(this, "등록 실패", Toast.LENGTH_SHORT).show();
                     }
@@ -107,5 +186,14 @@ public class RegisterActivity extends Activity {
                 Log.e("UploadError", "Error: " + e.getMessage());
             }
         }).start();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // 토글 버튼 클릭 시 드로어 열고 닫기
+        if (toggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
