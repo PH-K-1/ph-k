@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 } else if (itemId == R.id.nav_register1) {
                     // 등록 선택 시 처리
-                    Intent intent = new Intent(MainActivity.this, RegisterActivity1.class); // 수정해야함
+                    Intent intent = new Intent(MainActivity.this, RegisterActivity.class); // 수정해야함
                     startActivity(intent);
                     return true;
                 } else if (itemId == R.id.nav_mypage) {
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 } else if (itemId == R.id.nav_register1) {
                     // 마이 페이지 선택 시 처리
-                    Intent intent = new Intent(MainActivity.this, RegisterActivity1.class); // 수정해야함
+                    Intent intent = new Intent(MainActivity.this, RegisterActivity.class); // 수정해야함
                     startActivity(intent);
                     return true;
                 } else if (itemId == R.id.nav_mypage) {
