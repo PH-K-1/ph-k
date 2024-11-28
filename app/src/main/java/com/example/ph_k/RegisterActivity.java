@@ -1,78 +1,111 @@
 package com.example.ph_k;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.Nullable;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
+import java.io.ByteArrayOutputStream;
 
-import org.json.JSONObject;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class RegisterActivity extends AppCompatActivity {
-
-    EditText usernameEditText, passwordEditText;
-    Button registerButton;
+public class RegisterActivity extends Activity {
+    private static final int IMAGE_PICK_CODE = 1000;
+    private ImageView imagePreview;
+    private Uri imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        usernameEditText = findViewById(R.id.username);
-        passwordEditText = findViewById(R.id.password);
-        registerButton = findViewById(R.id.register_button);
+        imagePreview = findViewById(R.id.image_preview);
+        EditText editTitle = findViewById(R.id.edit_title);
+        EditText editDescription = findViewById(R.id.edit_description);
+        EditText editPrice = findViewById(R.id.edit_price);
+        Button buttonUploadImage = findViewById(R.id.button_upload_image);
+        Button buttonRegister = findViewById(R.id.button_register);
 
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                register();
+        buttonUploadImage.setOnClickListener(v -> pickImage());
+        buttonRegister.setOnClickListener(v -> {
+            String title = editTitle.getText().toString();
+            String description = editDescription.getText().toString();
+            String price = editPrice.getText().toString();
+
+            if (imageUri == null || title.isEmpty() || description.isEmpty() || price.isEmpty()) {
+                Toast.makeText(this, "모든 항목을 입력하세요.", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            uploadData(title, description, price, imageUri);
         });
     }
 
-    private void register() {
-        String username = usernameEditText.getText().toString();
-        String password = passwordEditText.getText().toString();
+    private void pickImage() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, IMAGE_PICK_CODE);
+    }
 
-        String url = "http://192.168.200.114:7310/register";  // 서버 URL
-
-        // JSON 객체 생성
-        JSONObject jsonParams = new JSONObject();
-        try {
-            jsonParams.put("username", username);
-            jsonParams.put("password", password);
-        } catch (Exception e) {
-            e.printStackTrace();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == IMAGE_PICK_CODE) {
+            imageUri = data.getData();
+            imagePreview.setImageURI(imageUri);
         }
+    }
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonParams,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        // 서버에서 반환된 응답 처리
-                        Toast.makeText(RegisterActivity.this, "회원가입에 성공했습니다.", Toast.LENGTH_SHORT).show();
-                        finish();  // 회원가입 성공 후 로그인 화면으로 돌아가기
+    private void uploadData(String title, String description, String price, Uri imageUri) {
+        new Thread(() -> {
+            try {
+                OkHttpClient client = new OkHttpClient();
+
+                // 이미지 변환
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+                byte[] imageData = stream.toByteArray();
+
+                // 서버 요청 생성
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("title", title)
+                        .addFormDataPart("description", description)
+                        .addFormDataPart("price", price)
+                        .addFormDataPart("image", "image.jpg", RequestBody.create(MediaType.parse("image/jpeg"), imageData))
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url("http://192.168.200.114:7310/upload") // Flask 서버 URL
+                        .post(requestBody)
+                        .build();
+
+                Response response = client.newCall(request).execute();
+
+                runOnUiThread(() -> {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(this, "등록 성공", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "등록 실패", Toast.LENGTH_SHORT).show();
                     }
-                },
-                error -> Toast.makeText(RegisterActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show()) {
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                return headers;
+                });
+            } catch (Exception e) {
+                Log.e("UploadError", "Error: " + e.getMessage());
             }
-        };
-
-        Volley.newRequestQueue(this).add(jsonObjectRequest);
+        }).start();
     }
 }

@@ -1,6 +1,7 @@
 package com.example.ph_k;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,8 +38,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         holder.description.setText(item.getDescription());
         holder.price.setText(item.getPrice() + "원");
 
+        // 서버에서 반환된 이미지 경로를 전체 URL로 변환
+        String imageUrl = item.getImageUrl();
+        Log.d("ItemAdapter", "Image URL: " + imageUrl);
+
         Glide.with(context)
-                .load(item.getImagePath()) // 서버에서 반환된 이미지 경로
+                .load(imageUrl) // 이미지를 로드
+                .error(R.drawable.mypage) // 에러 시 기본 이미지 표시
                 .into(holder.image);
     }
 

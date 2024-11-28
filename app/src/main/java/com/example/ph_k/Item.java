@@ -5,14 +5,14 @@ public class Item {
     private String title;
     private String description;
     private String price;
-    private String imagePath;
+    private String imageUrl;
 
-    public Item(int id, String title, String description, String price, String imagePath) {
+    public Item(int id, String title, String description, String price, String imageUrl) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.price = price;
-        this.imagePath = imagePath;
+        this.imageUrl = imageUrl;
     }
 
     public int getId() {
@@ -31,7 +31,7 @@ public class Item {
         return price;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public String getImageUrl() {
+        return imageUrl;
     }
 }
