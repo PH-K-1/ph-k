@@ -1,6 +1,7 @@
 package com.example.ph_k;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,6 @@ import java.util.List;
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     private Context context;
     private List<Item> itemList;
-    private static final String BASE_URL = "http://192.168.200.114:7310/static/uploads"; // 서버 이미지 URL의 기본 경로
 
     public ItemAdapter(Context context, List<Item> itemList) {
         this.context = context;
@@ -39,11 +39,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         holder.price.setText(item.getPrice() + "원");
 
         // 서버에서 반환된 이미지 경로를 전체 URL로 변환
-        String imageUrl = BASE_URL + item.getImagePath();
+        String imageUrl = item.getImageUrl();
+        Log.d("ItemAdapter", "Image URL: " + imageUrl);
 
-        // Glide로 이미지 로딩
         Glide.with(context)
-                .load(imageUrl) // 완전한 이미지 URL
+                .load(imageUrl) // 이미지를 로드
+                .error(R.drawable.mypage) // 에러 시 기본 이미지 표시
                 .into(holder.image);
     }
 

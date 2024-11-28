@@ -53,24 +53,25 @@ public class BoardActivity extends AppCompatActivity {
                             JSONArray items = response.getJSONArray("items");
                             for (int i = 0; i < items.length(); i++) {
                                 JSONObject item = items.getJSONObject(i);
-                                itemList.add(new Item(
+                                Item newItem = new Item(
                                         item.getInt("id"),
                                         item.getString("title"),
                                         item.getString("description"),
                                         item.getString("price"),
-                                        item.getString("image_path")
-                                ));
+                                        item.getString("image_url")
+                                );
+                                itemList.add(newItem);
                             }
                             adapter.notifyDataSetChanged();
                         } catch (JSONException e) {
-                            Log.e("BoardActivity", "JSON Parsing Error: " + e.getMessage());
+                            Log.e("BoardActivity", "JSON Parsing error: " + e.getMessage());
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("BoardActivity", "Volley Error: " + error.getMessage());
+                        Log.e("BoardActivity", "Volley error: " + error.getMessage());
                     }
                 });
 
