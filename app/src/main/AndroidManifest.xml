@@ -27,7 +27,7 @@
         </activity>
 
         <activity android:name=".MyPageActivity" android:exported="true" tools:ignore="WrongManifestParent" />
-        <activity android:name=".SignUpActivity" android:exported="true" tools:ignore="WrongManifestParent" />
+        <activity android:name=".SignupActivity" android:exported="true" tools:ignore="WrongManifestParent" />
         <activity android:name=".LoginActivity" android:exported="true" tools:ignore="WrongManifestParent" />
         <activity android:name=".ChatActivity" android:exported="true" tools:ignore="WrongManifestParent" />
         <activity android:name=".RegisterActivity" android:exported="true" tools:ignore="WrongManifestParent" />

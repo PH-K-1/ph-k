@@ -1,10 +1,10 @@
 package com.example.ph_k;
 
-public class RegisterRequest {
+public class SignRequest {
     private String username;
     private String password;
 
-    public RegisterRequest(String username, String password) {
+    public SignRequest(String username, String password) {
         this.username = username;
         this.password = password;
     }

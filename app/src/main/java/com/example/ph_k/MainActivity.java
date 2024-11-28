@@ -50,14 +50,14 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                     // 홈 선택 시 처리
                     return true;
-                } else if (itemId == R.id.nav_register1) {
+                } else if (itemId == R.id.nav_register) {
                     // 등록 선택 시 처리
-                    Intent intent = new Intent(MainActivity.this, RegisterActivity.class); // 수정해야함
+                    Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
                     startActivity(intent);
                     return true;
                 } else if (itemId == R.id.nav_mypage) {
                     // 마이 페이지 선택 시 처리
-                    Intent intent = new Intent(MainActivity.this, MyPageActivity.class); // 수정해야함
+                    Intent intent = new Intent(MainActivity.this, MyPageActivity.class);
                     startActivity(intent);
                     return true;
                 }
@@ -74,22 +74,20 @@ public class MainActivity extends AppCompatActivity {
                 if (itemId == R.id.nav_home) {
                     Intent intent = new Intent(MainActivity.this, MainActivity.class);
                     startActivity(intent);
-                    // 홈 선택 시 처리
                     return true;
-                } else if (itemId == R.id.nav_register1) {
-                    // 마이 페이지 선택 시 처리
-                    Intent intent = new Intent(MainActivity.this, RegisterActivity.class); // 수정해야함
-                    startActivity(intent);
-                    return true;
-                } else if (itemId == R.id.nav_mypage) {
-                    // 등록 선택 시 처리
-                    Intent intent = new Intent(MainActivity.this, MyPageActivity.class); // 수정해야함
+                }
+                else if (itemId == R.id.nav_register) {
+                    Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
                     startActivity(intent);
                     return true;
                 }
                 else if (itemId == R.id.nav_border) {
-                    // 등록 선택 시 처리
-                    Intent intent = new Intent(MainActivity.this, BoardActivity.class); // 수정해야함
+                    Intent intent = new Intent(MainActivity.this, BoardActivity.class);
+                    startActivity(intent);
+                    return true;
+                }
+                else if (itemId == R.id.nav_mypage) {
+                    Intent intent = new Intent(MainActivity.this, MyPageActivity.class);
                     startActivity(intent);
                     return true;
                 }
