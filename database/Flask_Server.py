@@ -25,8 +25,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # upload 디렉토리 없으면 생성
 
 
-@app.route('/register', methods=['POST'])
-def register_user():
+@app.route('/signup', methods=['POST'])
+def signup_user():
     try:
         data = request.get_json()
         username = data['username']
@@ -38,7 +38,7 @@ def register_user():
         connection.commit()
         return jsonify({"message": "회원가입 성공"}), 201
     except Exception as e:
-        print("Register Error:", str(e))  # 서버 로그에 출력
+        print("signup Error:", str(e))  # 서버 로그에 출력
         return jsonify({"message": "회원가입 실패", "error": str(e)}), 400
 
 
