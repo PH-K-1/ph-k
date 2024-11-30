@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -55,7 +56,6 @@ public class MyPageActivity extends AppCompatActivity {
         // 현재 Activity와 연결된 메뉴 항목 선택
         bottomNavigationView.setSelectedItemId(R.id.nav_mypage);
 
-
         // 로그인 버튼 클릭 리스너
         Button loginButton = findViewById(R.id.btn_login);
 
@@ -86,6 +86,23 @@ public class MyPageActivity extends AppCompatActivity {
                 }
             });
         }
+
+        // 내가 쓴 게시글 버튼 클릭 리스너
+        Button writtenPostsButton = findViewById(R.id.btn_written_posts);
+        writtenPostsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 로그인 상태 확인
+                if (username.equals("로그인 후 이용 가능합니다.")) {
+                    // 로그인되지 않은 경우, Toast 메시지 표시
+                    Toast.makeText(MyPageActivity.this, "로그인 후 이용 가능합니다.", Toast.LENGTH_SHORT).show();
+                } else {
+                    // 로그인된 경우, 내가 쓴 게시글 화면으로 이동
+                    Intent intent = new Intent(MyPageActivity.this, MylistActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
 
         // 네비게이션 아이템 선택 리스너
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {

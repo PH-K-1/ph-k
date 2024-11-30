@@ -33,6 +33,9 @@
         <activity android:name=".RegisterActivity" android:exported="true" tools:ignore="WrongManifestParent" />
         <activity android:name=".BoardActivity" android:exported="true" tools:ignore="WrongManifestParent" />
 
+        <!-- MylistActivity 추가 -->
+        <activity android:name=".MylistActivity" android:exported="true" tools:ignore="WrongManifestParent" />
+
     </application>
 
     <!-- 인터넷 권한 추가 -->

@@ -87,6 +87,16 @@
                     android:textColor="@android:color/white" />
 
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_written_posts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="내가 쓴 게시글"
+                    android:layout_marginBottom="16dp"
+                    app:cornerRadius="12dp"
+                    android:backgroundTint="#8ACBFD"
+                    android:textColor="@android:color/white" />
+
             </LinearLayout>
         </ScrollView>
 
