@@ -71,6 +71,9 @@ public class RegisterActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
+        // ** 현재 Activity와 연결된 메뉴 항목 선택 **
+        bottomNavigationView.setSelectedItemId(R.id.nav_register);
+
         // 네비게이션 아이템 선택 리스너
         navigationView.setNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
@@ -130,6 +133,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+
     private void pickImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, IMAGE_PICK_CODE);
@@ -165,7 +169,7 @@ public class RegisterActivity extends AppCompatActivity {
                         .build();
 
                 Request request = new Request.Builder()
-                        .url("http://192.168.200.114:7310/upload") // Flask 서버 URL
+                        .url("http://192.168.55.231:7310/upload") // Flask 서버 URL
                         .post(requestBody)
                         .build();
 

@@ -29,7 +29,7 @@ public class MyPageActivity extends AppCompatActivity {
 
         // 사용자 정보 불러오기
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-        String username = sharedPreferences.getString("username", "host");
+        String username = sharedPreferences.getString("username", "로그인 후 이용 가능합니다.");
 
         // 사용자 이름을 텍스트뷰에 표시
         TextView usernameTextView = findViewById(R.id.usernameTextView);
@@ -52,21 +52,15 @@ public class MyPageActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        // 회원가입 버튼 클릭 리스너
-        Button registerButton = findViewById(R.id.btn_signup);
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MyPageActivity.this, SignupActivity.class);
-                startActivity(intent);
-            }
-        });
+        // 현재 Activity와 연결된 메뉴 항목 선택
+        bottomNavigationView.setSelectedItemId(R.id.nav_mypage);
+
 
         // 로그인 버튼 클릭 리스너
         Button loginButton = findViewById(R.id.btn_login);
 
         // 사용자가 로그인 상태라면 로그인 버튼을 '로그아웃'으로 변경
-        if (!username.equals("host")) {
+        if (!username.equals("로그인 후 이용 가능합니다.")) {
             loginButton.setText("로그아웃");
             loginButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -103,12 +97,7 @@ public class MyPageActivity extends AppCompatActivity {
                     startActivity(intent);
                     return true;
                 } else if (itemId == R.id.nav_mypage) {
-                    Intent intent = new Intent(MyPageActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    return true;
-                } else if (itemId == R.id.nav_mypage) {
-                    Intent intent = new Intent(MyPageActivity.this, MyPageActivity.class);
-                    startActivity(intent);
+                    // 현재 Activity가 MyPageActivity이므로 아무 일도 하지 않음
                     return true;
                 }
                 drawerLayout.closeDrawers();
@@ -133,10 +122,8 @@ public class MyPageActivity extends AppCompatActivity {
                     Intent intent = new Intent(MyPageActivity.this, BoardActivity.class);
                     startActivity(intent);
                     return true;
-                }
-                else if (itemId == R.id.nav_mypage) {
-                    Intent intent = new Intent(MyPageActivity.this, MyPageActivity.class);
-                    startActivity(intent);
+                } else if (itemId == R.id.nav_mypage) {
+                    // 현재 Activity가 MyPageActivity이므로 아무 일도 하지 않음
                     return true;
                 }
                 return false;

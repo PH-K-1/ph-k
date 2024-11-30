@@ -28,7 +28,7 @@ public class BoardActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ItemAdapter adapter;
     private List<Item> itemList;
-    private static final String URL = "http://192.168.200.114:7310/get_items";
+    private static final String URL = "http://192.168.55.231:7310/get_items";
 
     // 드로어 관련 변수
     private DrawerLayout drawerLayout;
@@ -54,6 +54,9 @@ public class BoardActivity extends AppCompatActivity {
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+
+        // 현재 Activity와 연결된 메뉴 항목 선택
+        bottomNavigationView.setSelectedItemId(R.id.nav_border);
 
         // 네비게이션 아이템 선택 리스너
         navigationView.setNavigationItemSelectedListener(item -> {
@@ -87,8 +90,7 @@ public class BoardActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             } else if (itemId == R.id.nav_border) {
-                Intent intent = new Intent(BoardActivity.this, BoardActivity.class);
-                startActivity(intent);
+                // 현재 Activity가 BoardActivity이므로 아무 일도 하지 않음
                 return true;
             } else if (itemId == R.id.nav_mypage) {
                 Intent intent = new Intent(BoardActivity.this, MyPageActivity.class);
@@ -108,6 +110,7 @@ public class BoardActivity extends AppCompatActivity {
 
         fetchItems();
     }
+
 
     private void fetchItems() {
         RequestQueue queue = Volley.newRequestQueue(this);

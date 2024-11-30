@@ -71,4 +71,11 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
+    // LoginActivity.java 또는 해당 액티비티 클래스에서
+    public void onSignUpClick(View view) {
+        // 회원가입 화면으로 전환
+        Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
+        startActivity(intent);
+    }
 }
