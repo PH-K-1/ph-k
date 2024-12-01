@@ -92,6 +92,9 @@ public class PostDetailActivity extends AppCompatActivity {
             return false;
         });
 
+
+
+
         // 게시글 세부 정보 표시
         Intent intent = getIntent();
         String title = intent.getStringExtra("title");

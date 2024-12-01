@@ -28,6 +28,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // item_layout.xml을 인플레이트하여 ViewHolder에 전달
         View view = LayoutInflater.from(context).inflate(R.layout.item_layout, parent, false);
         return new ViewHolder(view);
     }
@@ -36,13 +37,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Item item = itemList.get(position);
         holder.title.setText(item.getTitle());
-        holder.description.setText(item.getDescription());
         holder.price.setText(item.getPrice() + "원");
 
         // 서버에서 반환된 이미지 경로를 전체 URL로 변환
         String imageUrl = item.getImageUrl();
         Log.d("ItemAdapter", "Image URL: " + imageUrl);
 
+        // Glide로 이미지를 로드
         Glide.with(context)
                 .load(imageUrl) // 이미지를 로드
                 .error(R.drawable.mypage) // 에러 시 기본 이미지 표시
@@ -66,15 +67,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView title, description, price;
+        TextView title, price;
         ImageView image;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            title = itemView.findViewById(R.id.itemTitle);
-            description = itemView.findViewById(R.id.itemDescription);
-            price = itemView.findViewById(R.id.itemPrice);
-            image = itemView.findViewById(R.id.itemImage);
+            title = itemView.findViewById(R.id.itemTitle);  // 제목
+            price = itemView.findViewById(R.id.itemPrice);  // 가격
+            image = itemView.findViewById(R.id.itemImage);  // 이미지
         }
     }
 }
