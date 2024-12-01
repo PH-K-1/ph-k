@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/nav_home"
+        android:id="@+id/nav_border"
         android:icon="@drawable/ic_home"
         android:title="홈" />
     <item
         android:id="@+id/nav_register"
         android:icon="@drawable/register"
         android:title="등록" />
-    <item
-        android:id="@+id/nav_border"
-        android:icon="@drawable/ic_list"
-        android:title="게시판" />
     <item
         android:id="@+id/nav_mypage"
         android:icon="@drawable/mypage"

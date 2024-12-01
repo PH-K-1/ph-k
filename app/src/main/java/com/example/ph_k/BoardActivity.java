@@ -62,11 +62,7 @@ public class BoardActivity extends AppCompatActivity {
         // 네비게이션 아이템 선택 리스너
         navigationView.setNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            if (itemId == R.id.nav_home) {
-                Intent intent = new Intent(BoardActivity.this, MainActivity.class);
-                startActivity(intent);
-                return true;
-            } else if (itemId == R.id.nav_register) {
+            if (itemId == R.id.nav_register) {
                 Intent intent = new Intent(BoardActivity.this, RegisterActivity.class);
                 startActivity(intent);
                 return true;
@@ -82,11 +78,7 @@ public class BoardActivity extends AppCompatActivity {
         // 하단 네비게이션 아이템 선택 리스너
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            if (itemId == R.id.nav_home) {
-                Intent intent = new Intent(BoardActivity.this, MainActivity.class);
-                startActivity(intent);
-                return true;
-            } else if (itemId == R.id.nav_register) {
+            if (itemId == R.id.nav_register) {
                 Intent intent = new Intent(BoardActivity.this, RegisterActivity.class);
                 startActivity(intent);
                 return true;

@@ -24,15 +24,25 @@
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:layout_below="@id/toolbar"
-            android:scaleType="centerCrop"
-            android:layout_marginTop="16dp"/>
+            android:scaleType="centerCrop" />
+
+        <!-- Divider between image and title -->
 
         <!-- Text View for product title -->
+
+        <View
+            android:id="@+id/dividerAboveTitle"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/itemImageView"
+            android:layout_marginTop="66dp"
+            android:background="@android:color/darker_gray" />
+
         <TextView
             android:id="@+id/titleTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/itemImageView"
+            android:layout_below="@id/dividerAboveTitle"
             android:layout_alignParentStart="true"
             android:layout_marginStart="14dp"
             android:layout_marginTop="10dp"
@@ -42,8 +52,6 @@
             android:textStyle="bold" />
 
         <!-- Divider between title and description -->
-
-        <!-- Text View for product description -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -51,13 +59,7 @@
             android:layout_marginTop="25dp"
             android:background="@android:color/darker_gray" />
 
-        <!-- Divider between description and price -->
-
-        <!-- Text View for product price -->
-
-        <!-- MaterialButton to purchase product -->
-
-        <!-- Bottom navigation view -->
+        <!-- Text View for product description -->
         <TextView
             android:id="@+id/descriptionTextView"
             android:layout_width="match_parent"
@@ -73,51 +75,40 @@
             android:textColor="#666666"
             android:textSize="16sp" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/descriptionTextView"
-            android:layout_marginTop="103dp"
-            android:background="@android:color/darker_gray" />
-
-        <TextView
-            android:id="@+id/priceTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/descriptionTextView"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="7dp"
-            android:layout_marginTop="111dp"
-            android:text="₩ 100,000"
-            android:textColor="#FF5722"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/buyButton"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_below="@id/priceTextView"
-            android:layout_marginTop="13dp"
-            android:backgroundTint="#FF5722"
-            android:text="경매 참여하기"
-            android:textColor="#FFFFFF" />
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNavigationView"
+        <!-- Bottom container for price and button -->
+        <LinearLayout
+            android:id="@+id/bottomContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            app:menu="@menu/bottom_navigation_menu"
-            android:layout_marginBottom="16dp" />
+            android:orientation="horizontal"
+            android:background="@android:color/white"
+            android:padding="8dp"
+            android:elevation="4dp">
+
+            <!-- Text View for product price -->
+            <TextView
+                android:id="@+id/priceTextView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="₩ 100,000"
+                android:textColor="#FF5722"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- MaterialButton to participate in auction -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buyButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:backgroundTint="#FF5722"
+                android:text="경매 참여하기"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+        </LinearLayout>
     </RelativeLayout>
-
-    <!-- Drawer Navigation View -->
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigationView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        app:menu="@menu/drawer_menu" />
-
 </androidx.drawerlayout.widget.DrawerLayout>

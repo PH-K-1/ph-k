@@ -71,7 +71,7 @@ public class MyPageActivity extends AppCompatActivity {
                     editor.apply();
 
                     // 로그아웃 후 로그인 화면으로 이동
-                    Intent intent = new Intent(MyPageActivity.this, MainActivity.class);
+                    Intent intent = new Intent(MyPageActivity.this, BoardActivity.class);
                     startActivity(intent);
                     finish(); // 현재 액티비티 종료
                 }
@@ -109,8 +109,8 @@ public class MyPageActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
-                if (itemId == R.id.nav_home) {
-                    Intent intent = new Intent(MyPageActivity.this, MainActivity.class);
+                if (itemId == R.id.nav_border) {
+                    Intent intent = new Intent(MyPageActivity.this, BoardActivity.class);
                     startActivity(intent);
                     return true;
                 } else if (itemId == R.id.nav_mypage) {
@@ -127,11 +127,7 @@ public class MyPageActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
-                if (itemId == R.id.nav_home) {
-                    Intent intent = new Intent(MyPageActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    return true;
-                } else if (itemId == R.id.nav_register) {
+                if (itemId == R.id.nav_register) {
                     Intent intent = new Intent(MyPageActivity.this, RegisterActivity.class);
                     startActivity(intent);
                     return true;

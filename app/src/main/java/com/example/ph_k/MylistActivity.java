@@ -56,16 +56,12 @@ public class MylistActivity extends AppCompatActivity {
         toggle.syncState();
 
         // 현재 Activity와 연결된 메뉴 항목 선택
-        bottomNavigationView.setSelectedItemId(R.id.nav_mypage); // '내 정보' 버튼이 눌린 상태로 표시
+        bottomNavigationView.setSelectedItemId(R.id.nav_border); // '내 정보' 버튼이 눌린 상태로 표시
 
         // 네비게이션 아이템 선택 리스너
         navigationView.setNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            if (itemId == R.id.nav_home) {
-                Intent intent = new Intent(MylistActivity.this, MainActivity.class);
-                startActivity(intent);
-                return true;
-            } else if (itemId == R.id.nav_register) {
+           if (itemId == R.id.nav_register) {
                 Intent intent = new Intent(MylistActivity.this, RegisterActivity.class);
                 startActivity(intent);
                 return true;
@@ -81,11 +77,7 @@ public class MylistActivity extends AppCompatActivity {
         // 하단 네비게이션 아이템 선택 리스너
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            if (itemId == R.id.nav_home) {
-                Intent intent = new Intent(MylistActivity.this, MainActivity.class);
-                startActivity(intent);
-                return true;
-            } else if (itemId == R.id.nav_register) {
+           if (itemId == R.id.nav_register) {
                 Intent intent = new Intent(MylistActivity.this, RegisterActivity.class);
                 startActivity(intent);
                 return true;

@@ -77,11 +77,7 @@ public class RegisterActivity extends AppCompatActivity {
         // 네비게이션 아이템 선택 리스너
         navigationView.setNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            if (itemId == R.id.nav_home) {
-                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                startActivity(intent);
-                return true;
-            } else if (itemId == R.id.nav_register) {
+            if (itemId == R.id.nav_register) {
                 // 현재 RegisterActivity이므로 아무 일도 일어나지 않음
                 return true;
             } else if (itemId == R.id.nav_mypage) {
@@ -96,11 +92,7 @@ public class RegisterActivity extends AppCompatActivity {
         // 하단 네비게이션 뷰 선택 리스너
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            if (itemId == R.id.nav_home) {
-                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                startActivity(intent);
-                return true;
-            } else if (itemId == R.id.nav_register) {
+            if (itemId == R.id.nav_register) {
                 // 현재 RegisterActivity이므로 아무 일도 일어나지 않음
                 return true;
             } else if (itemId == R.id.nav_border) {
