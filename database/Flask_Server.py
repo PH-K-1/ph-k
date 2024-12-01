@@ -83,7 +83,7 @@ def upload_item():
             connection.close()  # 기존 연결 닫기
             connection = create_connection()  # 새 연결 생성
 
-        # 데이터베이스 저장
+        # 데이터베이스 저장.
         cursor = connection.cursor()
         query = """
         INSERT INTO items (title, description, price, image_path, user_id) 
