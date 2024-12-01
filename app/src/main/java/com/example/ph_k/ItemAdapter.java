@@ -1,6 +1,7 @@
 package com.example.ph_k;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,9 +47,18 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 .load(imageUrl) // 이미지를 로드
                 .error(R.drawable.mypage) // 에러 시 기본 이미지 표시
                 .into(holder.image);
+
+        // 아이템 클릭 시 상세보기 화면으로 이동
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, PostDetailActivity.class);
+            intent.putExtra("item_id", item.getId());  // ID 전달
+            intent.putExtra("title", item.getTitle()); // 제목 전달
+            intent.putExtra("description", item.getDescription()); // 설명 전달
+            intent.putExtra("price", item.getPrice() + "원"); // 가격 전달
+            intent.putExtra("image_url", item.getImageUrl()); // 이미지 URL 전달
+            context.startActivity(intent);
+        });
     }
-
-
 
     @Override
     public int getItemCount() {

@@ -27,7 +27,7 @@ public class ChatActivity extends AppCompatActivity {
 
         OkHttpClient client = new OkHttpClient();
         // 서버의 퍼블릭 IP와 포트를 입력
-        Request request = new Request.Builder().url("ws://192.168.55.231:7310").build();
+        Request request = new Request.Builder().url("ws://192.168.200.114:7310").build();
         webSocket = client.newWebSocket(request, new WebSocketListener() {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {

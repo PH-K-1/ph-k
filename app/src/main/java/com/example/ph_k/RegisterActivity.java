@@ -169,7 +169,7 @@ public class RegisterActivity extends AppCompatActivity {
                         .build();
 
                 Request request = new Request.Builder()
-                        .url("http://192.168.55.231:7310/upload") // Flask 서버 URL
+                        .url("http://192.168.200.114:7310/upload") // Flask 서버 URL
                         .post(requestBody)
                         .build();
 

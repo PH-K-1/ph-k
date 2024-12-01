@@ -32,9 +32,9 @@
         <activity android:name=".ChatActivity" android:exported="true" tools:ignore="WrongManifestParent" />
         <activity android:name=".RegisterActivity" android:exported="true" tools:ignore="WrongManifestParent" />
         <activity android:name=".BoardActivity" android:exported="true" tools:ignore="WrongManifestParent" />
-
-        <!-- MylistActivity 추가 -->
         <activity android:name=".MylistActivity" android:exported="true" tools:ignore="WrongManifestParent" />
+        <activity android:name=".PostDetailActivity" />
+
 
     </application>
 

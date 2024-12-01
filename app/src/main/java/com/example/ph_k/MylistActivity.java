@@ -3,7 +3,7 @@ package com.example.ph_k;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -28,7 +28,7 @@ public class MylistActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ItemAdapter adapter;
     private List<Item> itemList;
-    private static final String URL = "http://192.168.55.231:7310/get_items";
+    private static final String URL = "http://192.168.200.114:7310/get_items";
 
     // 드로어 관련 변수
     private DrawerLayout drawerLayout;
