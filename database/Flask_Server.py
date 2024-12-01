@@ -24,7 +24,6 @@ UPLOAD_FOLDER = './static/upload'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # upload 디렉토리 없으면 생성
 
-
 @app.route('/signup', methods=['POST'])
 def signup_user():
     try:
@@ -41,7 +40,6 @@ def signup_user():
         print("signup Error:", str(e))  # 서버 로그에 출력
         return jsonify({"message": "회원가입 실패", "error": str(e)}), 400
 
-
 @app.route('/login', methods=['POST'])
 def login_user():
     try:
@@ -50,18 +48,17 @@ def login_user():
         password = data['password']
 
         cursor = connection.cursor()
-        query = "SELECT * FROM users WHERE username = %s AND password = %s"
+        query = "SELECT id FROM users WHERE username = %s AND password = %s"
         cursor.execute(query, (username, password))
         user = cursor.fetchone()
 
         if user:
-            return jsonify({"message": "로그인 성공"}), 200
+            return jsonify({"message": "로그인 성공", "user_id": user[0]}), 200
         else:
             return jsonify({"message": "로그인 실패, 아이디 또는 비밀번호가 잘못되었습니다."}), 401
     except Exception as e:
         print("Login Error:", str(e))  # 서버 로그에 출력
         return jsonify({"message": "로그인 실패", "error": str(e)}), 400
-
 
 @app.route('/upload', methods=['POST'])
 def upload_item():
@@ -70,6 +67,7 @@ def upload_item():
         title = request.form['title']
         description = request.form['description']
         price = request.form['price']
+        user_id = request.form['user_id']  # 유저 ID 추가
         image = request.files['image']
 
         # 고유한 파일 이름 생성
@@ -88,10 +86,10 @@ def upload_item():
         # 데이터베이스 저장
         cursor = connection.cursor()
         query = """
-        INSERT INTO items (title, description, price, image_path) 
-        VALUES (%s, %s, %s, %s)
+        INSERT INTO items (title, description, price, image_path, user_id) 
+        VALUES (%s, %s, %s, %s, %s)
         """
-        cursor.execute(query, (title, description, price, image_path))
+        cursor.execute(query, (title, description, price, image_path, user_id))
         connection.commit()
 
         return jsonify({"message": "등록 성공"}), 201
@@ -107,26 +105,29 @@ def get_items():
             connection.close()
             connection = create_connection()
 
+        # user_id 없이 모든 아이템 반환
         cursor = connection.cursor(dictionary=True)
-        query = "SELECT id, title, description, price, image_path FROM items"
+        query = "SELECT id, title, description, price, image_path, user_id FROM items"
         cursor.execute(query)
         items = cursor.fetchall()
 
+        print(f"Fetched items: {items}")  # 디버깅을 위한 로그
+
         # 이미지를 클라이언트가 접근할 수 있도록 절대 경로 제공
         for item in items:
-            item['image_url'] = f'http://192.168.200.114:7310/static/upload/{os.path.basename(item["image_path"])}'
+            server_ip = request.host_url.strip('/')  # 현재 서버의 IP와 포트 가져오기
+            item['image_url'] = f'{server_ip}/static/upload/{os.path.basename(item["image_path"])}'
 
+            item['user_id'] = item['user_id']
         return jsonify({"items": items}), 200
     except Exception as e:
         return jsonify({"message": "게시글 조회 실패", "error": str(e)}), 400
-
 
 # 이미지 제공 경로
 @app.route('/static/upload/<filename>')
 @cross_origin()  # CORS 적용
 def serve_image(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=7310)
