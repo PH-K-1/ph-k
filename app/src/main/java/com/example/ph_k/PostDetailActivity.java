@@ -2,26 +2,17 @@ package com.example.ph_k;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationView;
 
 public class PostDetailActivity extends AppCompatActivity {
     private TextView titleTextView, descriptionTextView, priceTextView;
-    private ImageView itemImageView;
-    private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
-    private BottomNavigationView bottomNavigationView;
-    private ActionBarDrawerToggle toggle;
+    private ImageView itemImageView, backButton, shareButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,67 +24,30 @@ public class PostDetailActivity extends AppCompatActivity {
         descriptionTextView = findViewById(R.id.descriptionTextView);
         priceTextView = findViewById(R.id.priceTextView);
         itemImageView = findViewById(R.id.itemImageView);
+        backButton = findViewById(R.id.backButton);  // 뒤로가기 버튼
+        shareButton = findViewById(R.id.shareButton); // 공유하기 버튼
 
-        // 드로어 및 하단 네비게이션 설정
-        drawerLayout = findViewById(R.id.drawerLayout);
-        navigationView = findViewById(R.id.navigationView);
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        // 뒤로가기 버튼 클릭 리스너 설정
+        backButton.setOnClickListener(v -> finish());
 
-        setSupportActionBar(toolbar);
+        // 공유하기 버튼 클릭 리스너 설정
+        shareButton.setOnClickListener(v -> {
+            // 게시글 세부 정보 가져오기
+            Intent intent = getIntent();
+            String title = intent.getStringExtra("title");
+            String description = intent.getStringExtra("description");
+            String price = intent.getStringExtra("price");
+            String imageUrl = intent.getStringExtra("image_url");
 
-        // 드로어 설정
-        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
+            // 공유할 URL 생성 (여기서는 예시로 게시글 URL을 만듦)
+            String sharedUrl = "https://example.com/post?title=" + title;
 
-        bottomNavigationView.setSelectedItemId(R.id.nav_border);
-
-        // 네비게이션 메뉴 리스너 설정
-        navigationView.setNavigationItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_home) {
-                Intent intent = new Intent(PostDetailActivity.this, MainActivity.class);
-                startActivity(intent);
-                return true;
-            } else if (itemId == R.id.nav_register) {
-                Intent intent = new Intent(PostDetailActivity.this, RegisterActivity.class);
-                startActivity(intent);
-                return true;
-            } else if (itemId == R.id.nav_mypage) {
-                Intent intent = new Intent(PostDetailActivity.this, MyPageActivity.class);
-                startActivity(intent);
-                return true;
-            }
-            drawerLayout.closeDrawers();
-            return false;
+            // 공유 Intent 생성
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, "Check out this amazing post: " + sharedUrl);
+            startActivity(Intent.createChooser(shareIntent, "Share using"));
         });
-
-        // 하단 네비게이션 아이템 선택 리스너
-        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_home) {
-                Intent intent = new Intent(PostDetailActivity.this, MainActivity.class);
-                startActivity(intent);
-                return true;
-            } else if (itemId == R.id.nav_register) {
-                Intent intent = new Intent(PostDetailActivity.this, RegisterActivity.class);
-                startActivity(intent);
-                return true;
-            } else if (itemId == R.id.nav_border) {
-                Intent intent = new Intent(PostDetailActivity.this, BoardActivity.class);
-                startActivity(intent);
-                return true;
-            } else if (itemId == R.id.nav_mypage) {
-                Intent intent = new Intent(PostDetailActivity.this, MyPageActivity.class);
-                startActivity(intent);
-                return true;
-            }
-            return false;
-        });
-
-
-
 
         // 게시글 세부 정보 표시
         Intent intent = getIntent();

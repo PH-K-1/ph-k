@@ -2,6 +2,7 @@ package com.example.ph_k;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -77,12 +78,7 @@ public class RegisterActivity extends AppCompatActivity {
         // 네비게이션 아이템 선택 리스너
         navigationView.setNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            if (itemId == R.id.nav_home) {
-                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                startActivity(intent);
-                return true;
-            } else if (itemId == R.id.nav_register) {
-                // 현재 RegisterActivity이므로 아무 일도 일어나지 않음
+            if (itemId == R.id.nav_register) {
                 return true;
             } else if (itemId == R.id.nav_mypage) {
                 Intent intent = new Intent(RegisterActivity.this, MyPageActivity.class);
@@ -96,12 +92,7 @@ public class RegisterActivity extends AppCompatActivity {
         // 하단 네비게이션 뷰 선택 리스너
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            if (itemId == R.id.nav_home) {
-                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                startActivity(intent);
-                return true;
-            } else if (itemId == R.id.nav_register) {
-                // 현재 RegisterActivity이므로 아무 일도 일어나지 않음
+            if (itemId == R.id.nav_register) {
                 return true;
             } else if (itemId == R.id.nav_border) {
                 Intent intent = new Intent(RegisterActivity.this, BoardActivity.class);
@@ -133,7 +124,6 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-
     private void pickImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, IMAGE_PICK_CODE);
@@ -159,17 +149,28 @@ public class RegisterActivity extends AppCompatActivity {
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
                 byte[] imageData = stream.toByteArray();
 
+                // SharedPreferences에서 로그인된 사용자 정보 가져오기
+                SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+                String username = sharedPreferences.getString("username", null);  // 로그인된 사용자 이름 가져오기
+
+                if (username == null) {
+                    // 로그인되지 않은 경우 처리 (예: 로그인 화면으로 이동)
+                    runOnUiThread(() -> Toast.makeText(this, "로그인된 사용자가 없습니다.", Toast.LENGTH_SHORT).show());
+                    return;
+                }
+
                 // 서버 요청 생성
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
                         .addFormDataPart("title", title)
                         .addFormDataPart("description", description)
                         .addFormDataPart("price", price)
+                        .addFormDataPart("user_id", username)  // USER_ID 추가
                         .addFormDataPart("image", "image.jpg", RequestBody.create(MediaType.parse("image/jpeg"), imageData))
                         .build();
 
                 Request request = new Request.Builder()
-                        .url("http://192.168.200.114:7310/upload") // Flask 서버 URL
+                        .url("http://192.168.55.231:7310/upload") // Flask 서버 URL
                         .post(requestBody)
                         .build();
 

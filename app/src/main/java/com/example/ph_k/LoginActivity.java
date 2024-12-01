@@ -54,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "로그인 성공", Toast.LENGTH_SHORT).show();
 
                     // 메인 화면으로 이동
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, BoardActivity.class);
                     startActivity(intent);
                     finish(); // 로그인 후 현재 액티비티 종료
                 } else {
