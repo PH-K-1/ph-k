@@ -44,7 +44,7 @@ public class SignupActivity extends AppCompatActivity {
         String username = usernameEditText.getText().toString();
         String password = passwordEditText.getText().toString();
 
-        String url = "http://192.168.200.114:7310/signup";  // 서버 URL
+        String url = "http://192.168.55.231:7310/signup";  // 서버 URL
 
         // JSON 객체 생성
         JSONObject jsonParams = new JSONObject();

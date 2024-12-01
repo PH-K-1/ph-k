@@ -29,7 +29,7 @@ public class BoardActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ItemAdapter adapter;
     private List<Item> itemList;
-    private static final String URL = "http://192.168.200.114:7310/get_items";
+    private static final String URL = "http://192.168.55.231:7310/get_items";
 
     // 드로어 관련 변수
     private DrawerLayout drawerLayout;
@@ -115,8 +115,10 @@ public class BoardActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        Log.d("BoardActivity", "Response: " + response.toString());
                         try {
                             JSONArray items = response.getJSONArray("items");
+                            itemList.clear(); // 데이터가 갱신될 때마다 리스트 초기화
                             for (int i = 0; i < items.length(); i++) {
                                 JSONObject item = items.getJSONObject(i);
                                 Item newItem = new Item(
@@ -124,11 +126,19 @@ public class BoardActivity extends AppCompatActivity {
                                         item.getString("title"),
                                         item.getString("description"),
                                         item.getString("price"),
-                                        item.getString("image_url")
+                                        item.getString("image_url"),
+                                        item.getString("user_id") // user_id를 String으로 처리
                                 );
-                                itemList.add(newItem);
+                                itemList.add(newItem); // 새로운 아이템 추가
                             }
-                            adapter.notifyDataSetChanged();
+
+                            // 디버깅 로그 추가
+                            Log.d("BoardActivity", "Item list size: " + itemList.size());
+                            for (Item item : itemList) {
+                                Log.d("BoardActivity", "Item: " + item.getTitle()); // 각 아이템의 제목 출력
+                            }
+
+                            adapter.notifyDataSetChanged(); // 데이터 변경을 RecyclerView에 알림
                         } catch (JSONException e) {
                             Log.e("BoardActivity", "JSON Parsing error: " + e.getMessage());
                         }
@@ -144,3 +154,4 @@ public class BoardActivity extends AppCompatActivity {
         queue.add(request);
     }
 }
+

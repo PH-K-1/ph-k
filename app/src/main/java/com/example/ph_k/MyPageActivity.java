@@ -30,11 +30,15 @@ public class MyPageActivity extends AppCompatActivity {
 
         // 사용자 정보 불러오기
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-        String username = sharedPreferences.getString("username", "로그인 후 이용 가능합니다.");
+        String username = sharedPreferences.getString("username", null);
 
         // 사용자 이름을 텍스트뷰에 표시
         TextView usernameTextView = findViewById(R.id.usernameTextView);
-        usernameTextView.setText(username);
+        if (username != null) {
+            usernameTextView.setText(username);
+        } else {
+            usernameTextView.setText("로그인 후 이용 가능합니다.");
+        }
 
         // 네비게이션과 하단 네비게이션 설정
         drawerLayout = findViewById(R.id.drawerLayout);
@@ -60,7 +64,7 @@ public class MyPageActivity extends AppCompatActivity {
         Button loginButton = findViewById(R.id.btn_login);
 
         // 사용자가 로그인 상태라면 로그인 버튼을 '로그아웃'으로 변경
-        if (!username.equals("로그인 후 이용 가능합니다.")) {
+        if (username != null) {
             loginButton.setText("로그아웃");
             loginButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -71,12 +75,13 @@ public class MyPageActivity extends AppCompatActivity {
                     editor.apply();
 
                     // 로그아웃 후 로그인 화면으로 이동
-                    Intent intent = new Intent(MyPageActivity.this, BoardActivity.class);
+                    Intent intent = new Intent(MyPageActivity.this, LoginActivity.class);
                     startActivity(intent);
                     finish(); // 현재 액티비티 종료
                 }
             });
         } else {
+            loginButton.setText("로그인");
             loginButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -93,7 +98,7 @@ public class MyPageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // 로그인 상태 확인
-                if (username.equals("로그인 후 이용 가능합니다.")) {
+                if (username == null) {
                     // 로그인되지 않은 경우, Toast 메시지 표시
                     Toast.makeText(MyPageActivity.this, "로그인 후 이용 가능합니다.", Toast.LENGTH_SHORT).show();
                 } else {
