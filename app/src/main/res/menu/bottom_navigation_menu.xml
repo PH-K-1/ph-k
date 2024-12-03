@@ -12,4 +12,5 @@
         android:id="@+id/nav_mypage"
         android:icon="@drawable/mypage"
         android:title="내 정보" />
+
 </menu>

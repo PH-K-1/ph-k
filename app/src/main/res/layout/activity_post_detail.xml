@@ -23,20 +23,21 @@
             android:background="?attr/selectableItemBackground"
             android:elevation="10dp"/>
 
-        <!-- Image View for product image -->
-        <ImageView
-            android:id="@+id/itemImageView"
+        <!-- ViewPager2 for product images (슬라이드 이미지) -->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            android:layout_alignParentTop="true"
-            android:scaleType="centerCrop" />
+            android:layout_below="@id/backButton"
+            android:scaleType="centerCrop"
+            android:layout_alignParentTop="true" />
 
         <!-- Text View for product title -->
         <TextView
             android:id="@+id/titleTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/itemImageView"
+            android:layout_below="@id/viewPager"
             android:layout_marginStart="14dp"
             android:layout_marginTop="10dp"
             android:text="세련된 스마트폰"

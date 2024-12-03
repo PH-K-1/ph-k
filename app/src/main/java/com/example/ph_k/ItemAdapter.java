@@ -2,7 +2,6 @@ package com.example.ph_k;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
@@ -39,15 +39,17 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         holder.title.setText(item.getTitle());
         holder.price.setText(item.getPrice() + "원");
 
-        // 서버에서 반환된 이미지 경로를 전체 URL로 변환
-        String imageUrl = item.getImageUrl();
-        Log.d("ItemAdapter", "Image URL: " + imageUrl);
+        // 서버에서 반환된 이미지 경로들을 전체 URL로 변환
+        List<String> imageUrls = item.getImageUrls();  // 여러 이미지 URL을 가져옴
 
-        // Glide로 이미지를 로드
-        Glide.with(context)
-                .load(imageUrl) // 이미지를 로드
-                .error(R.drawable.mypage) // 에러 시 기본 이미지 표시
-                .into(holder.image);
+        // 첫 번째 이미지를 기본적으로 표시 (필요에 따라 수정 가능)
+        if (imageUrls != null && !imageUrls.isEmpty()) {
+            String firstImageUrl = imageUrls.get(0); // 첫 번째 이미지 URL
+            Glide.with(context)
+                    .load(firstImageUrl) // 이미지를 로드
+                    .error(R.drawable.mypage) // 에러 시 기본 이미지 표시
+                    .into(holder.image);
+        }
 
         // 아이템 클릭 시 상세보기 화면으로 이동
         holder.itemView.setOnClickListener(v -> {
@@ -56,7 +58,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             intent.putExtra("title", item.getTitle()); // 제목 전달
             intent.putExtra("description", item.getDescription()); // 설명 전달
             intent.putExtra("price", item.getPrice() + "원"); // 가격 전달
-            intent.putExtra("image_url", item.getImageUrl()); // 이미지 URL 전달
+            intent.putStringArrayListExtra("image_urls", new ArrayList<>(imageUrls)); // 여러 이미지 URL 전달
             context.startActivity(intent);
         });
     }

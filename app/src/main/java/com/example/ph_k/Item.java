@@ -1,19 +1,23 @@
 package com.example.ph_k;
+
+import java.util.List;
+
 public class Item {
     private int id;
     private String title;
     private String description;
     private String price;
-    private String imageUrl;
-    private String userId; // user_id 추가
+    private List<String> imageUrls;  // 여러 이미지 URL을 저장할 List로 변경
+    private String userId;
 
-    public Item(int id, String title, String description, String price, String imageUrl, String userId) {
+    // 생성자
+    public Item(int id, String title, String description, String price, List<String> imageUrls, String userId) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.price = price;
-        this.imageUrl = imageUrl;
-        this.userId = userId; // 초기화
+        this.imageUrls = imageUrls;  // 여러 이미지 URL 초기화
+        this.userId = userId;
     }
 
     public int getId() {
@@ -32,8 +36,8 @@ public class Item {
         return price;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public List<String> getImageUrls() {
+        return imageUrls;  // 여러 이미지 URL 반환
     }
 
     public String getUserId() {
