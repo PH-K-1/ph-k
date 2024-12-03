@@ -132,15 +132,21 @@ public class MylistActivity extends AppCompatActivity {
 
                                 // 로그인된 사용자만 필터링하여 아이템 리스트에 추가
                                 if (itemUserId.equals(loggedInUserId)) {
+                                    JSONArray imageUrls = item.getJSONArray("image_urls");
+                                    List<String> images = new ArrayList<>();
+                                    for (int j = 0; j < imageUrls.length(); j++) {
+                                        images.add(imageUrls.getString(j)); // 이미지 URL 리스트에 추가
+                                    }
+
                                     Item newItem = new Item(
                                             item.getInt("id"),
                                             item.getString("title"),
                                             item.getString("description"),
                                             item.getString("price"),
-                                            item.getString("image_url"),
-                                            itemUserId
+                                            images, // 여러 이미지 URL을 리스트로 전달
+                                            itemUserId // user_id를 String으로 처리
                                     );
-                                    itemList.add(newItem);
+                                    itemList.add(newItem); // 새로운 아이템 추가
                                 }
                             }
 

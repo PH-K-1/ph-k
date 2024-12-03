@@ -121,12 +121,20 @@ public class BoardActivity extends AppCompatActivity {
                             itemList.clear(); // 데이터가 갱신될 때마다 리스트 초기화
                             for (int i = 0; i < items.length(); i++) {
                                 JSONObject item = items.getJSONObject(i);
+
+                                // 여러 이미지 URL을 JSONArray로 받아서 리스트로 저장
+                                JSONArray imageUrls = item.getJSONArray("image_urls");
+                                List<String> images = new ArrayList<>();
+                                for (int j = 0; j < imageUrls.length(); j++) {
+                                    images.add(imageUrls.getString(j)); // 이미지 URL 리스트에 추가
+                                }
+
                                 Item newItem = new Item(
                                         item.getInt("id"),
                                         item.getString("title"),
                                         item.getString("description"),
                                         item.getString("price"),
-                                        item.getString("image_url"),
+                                        images, // 여러 이미지 URL을 리스트로 전달
                                         item.getString("user_id") // user_id를 String으로 처리
                                 );
                                 itemList.add(newItem); // 새로운 아이템 추가
@@ -154,4 +162,5 @@ public class BoardActivity extends AppCompatActivity {
         queue.add(request);
     }
 }
+
 

@@ -6,13 +6,27 @@
     android:padding="16dp"
     android:background="?android:attr/selectableItemBackground">
 
-    <!-- 이미지 (왼쪽에 작게) -->
-    <ImageView
-        android:id="@+id/itemImage"
-        android:layout_width="100dp"
+    <!-- 이미지 (가로 스크롤 가능) -->
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
         android:layout_height="100dp"
-        android:scaleType="centerCrop"
-        android:layout_marginEnd="10dp"/> <!-- 이미지 크기 및 오른쪽 여백 설정 -->
+        android:layout_marginEnd="10dp">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <!-- 여러 이미지 아이템을 담을 ImageView (동적으로 추가됨) -->
+            <ImageView
+                android:id="@+id/itemImage"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop"
+                android:layout_marginEnd="10dp"/>
+            <!-- 동적으로 추가되는 이미지들이 가로로 배치됨 -->
+        </LinearLayout>
+    </HorizontalScrollView>
 
     <!-- 제목과 가격을 오른쪽에 수직으로 배치 -->
     <LinearLayout
