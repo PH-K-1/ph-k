@@ -62,40 +62,44 @@ def login_user():
 
 @app.route('/upload', methods=['POST'])
 def upload_item():
-    global connection  # 전역 변수 connection 선언
+    global connection
     try:
         title = request.form['title']
         description = request.form['description']
         price = request.form['price']
-        user_id = request.form['user_id']  # 유저 ID 추가
-        image = request.files['image']
+        user_id = request.form['user_id']
 
-        # 고유한 파일 이름 생성
-        extension = os.path.splitext(image.filename)[1]  # 파일 확장자 추출
-        unique_filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{uuid.uuid4().hex}{extension}"
-        image_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
-
-        # 이미지 저장
-        image.save(image_path)
+        saved_image_paths = []
+        for file_key in request.files:
+            image = request.files[file_key]
+            extension = os.path.splitext(image.filename)[1]
+            unique_filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{uuid.uuid4().hex}{extension}"
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+            image.save(image_path)
+            saved_image_paths.append(image_path)
 
         # MySQL 연결 확인 및 재연결
         if not connection.is_connected():
-            connection.close()  # 기존 연결 닫기
-            connection = create_connection()  # 새 연결 생성
+            connection.close()
+            connection = create_connection()
 
-        # 데이터베이스 저장..
+        # 이미지 경로들을 하나의 문자열로 합침
+        image_paths_string = ','.join(saved_image_paths)
+
         cursor = connection.cursor()
         query = """
-        INSERT INTO items (title, description, price, image_path, user_id) 
+        INSERT INTO items (title, description, price, image_path, user_id)
         VALUES (%s, %s, %s, %s, %s)
         """
-        cursor.execute(query, (title, description, price, image_path, user_id))
+        cursor.execute(query, (title, description, price, image_paths_string, user_id))
         connection.commit()
 
-        return jsonify({"message": "등록 성공"}), 201
+        return jsonify({"message": "등록 성공", "image_count": len(saved_image_paths)}), 201
     except Exception as e:
-        print("Upload Error:", str(e))  # 서버 로그에 출력
+        print("Upload Error:", str(e))
         return jsonify({"message": "등록 실패", "error": str(e)}), 400
+
+
 
 @app.route('/get_items', methods=['GET'])
 def get_items():
