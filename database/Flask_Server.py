@@ -100,7 +100,6 @@ def upload_item():
         return jsonify({"message": "등록 실패", "error": str(e)}), 400
 
 
-
 @app.route('/get_items', methods=['GET'])
 def get_items():
     try:
@@ -115,17 +114,22 @@ def get_items():
         cursor.execute(query)
         items = cursor.fetchall()
 
-        print(f"Fetched items: {items}")  # 디버깅을 위한 로그
-
         # 이미지를 클라이언트가 접근할 수 있도록 절대 경로 제공
         for item in items:
             server_ip = request.host_url.strip('/')  # 현재 서버의 IP와 포트 가져오기
-            item['image_url'] = f'{server_ip}/static/upload/{os.path.basename(item["image_path"])}'
 
-            item['user_id'] = item['user_id']
+            # 여러 이미지 경로 처리
+            image_paths = item['image_path'].split(',')
+            image_urls = []
+            for path in image_paths:
+                image_urls.append(f'{server_ip}/static/upload/{os.path.basename(path)}')
+
+            item['image_urls'] = image_urls  # 이미지 URL 배열로 반환
+
         return jsonify({"items": items}), 200
     except Exception as e:
         return jsonify({"message": "게시글 조회 실패", "error": str(e)}), 400
+
 
 # 이미지 제공 경로
 @app.route('/static/upload/<filename>')
