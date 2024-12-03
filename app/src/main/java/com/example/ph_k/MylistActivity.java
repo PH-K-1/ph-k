@@ -5,8 +5,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,7 +22,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,13 +34,16 @@ public class MylistActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ItemAdapter adapter;
     private List<Item> itemList;
-    private static final String URL = "http://192.168.55.231:7310/get_items";
+    private static final String URL = "http://192.168.200.114:7310/get_items";
+
+    // 드로어 관련 변수
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private BottomNavigationView bottomNavigationView;
+    private ActionBarDrawerToggle toggle;
 
     // 로그인된 user_id 저장할 변수
     private String loggedInUserId;
-
-    // 하단 네비게이션 관련 변수
-    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,46 +52,65 @@ public class MylistActivity extends AppCompatActivity {
 
         // SharedPreferences에서 로그인된 user_id 가져오기
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-        loggedInUserId = sharedPreferences.getString("username", null); // "user_id" 키로 로그인된 사용자 ID 가져오기
+        loggedInUserId = sharedPreferences.getString("username", null); // "username" 키로 로그인된 사용자 ID 가져오기
 
-        // Toolbar 설정
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("내가 쓴 게시글");  // 제목 설정
-
-
-        // RecyclerView 설정
-        recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        itemList = new ArrayList<>();
-        adapter = new ItemAdapter(this, itemList);
-        recyclerView.setAdapter(adapter);
-
-        // 하단 네비게이션 설정
+        // 드로어와 하단 네비게이션 설정
+        drawerLayout = findViewById(R.id.drawerLayout);
+        navigationView = findViewById(R.id.navigationView);
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setSelectedItemId(R.id.nav_mypage);  // 하단 네비게이션에서 현재 액티비티에 해당하는 메뉴 선택
+        Toolbar toolbar = findViewById(R.id.toolbar);
 
-        // 하단 네비게이션 뷰 선택 리스너
+        setSupportActionBar(toolbar);
+
+        // ActionBarDrawerToggle 설정
+        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        // 네비게이션 아이템 선택 리스너
+        navigationView.setNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_register) {
+                startActivity(new Intent(MylistActivity.this, RegisterActivity.class));
+                return true;
+            } else if (itemId == R.id.nav_mypage) {
+                startActivity(new Intent(MylistActivity.this, MyPageActivity.class));
+                return true;
+            }
+            drawerLayout.closeDrawers();
+            return false;
+        });
+
+        // 하단 네비게이션 아이템 선택 리스너
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_register) {
-                // 현재 액티비티는 이미 선택되어 있으므로 아무 작업도 하지 않음
+                startActivity(new Intent(MylistActivity.this, RegisterActivity.class));
                 return true;
             } else if (itemId == R.id.nav_border) {
-                Intent intent = new Intent(MylistActivity.this, BoardActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(MylistActivity.this, BoardActivity.class));
                 return true;
             } else if (itemId == R.id.nav_mypage) {
-                Intent intent = new Intent(MylistActivity.this, MyPageActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(MylistActivity.this, MyPageActivity.class));
                 return true;
             }
             return false;
         });
 
-        // 게시글 불러오기
-        fetchItems();
+        // RecyclerView 설정
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // DividerItemDecoration 추가
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
+        recyclerView.addItemDecoration(dividerItemDecoration);
+
+        itemList = new ArrayList<>();
+        adapter = new ItemAdapter(this, itemList);
+        recyclerView.setAdapter(adapter);
+
+        fetchItems();  // 서버에서 게시글 데이터를 가져옵니다.
     }
 
     private void fetchItems() {
@@ -93,19 +120,17 @@ public class MylistActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        Log.d("MylistActivity", "Response: " + response.toString());
                         try {
-                            // 서버로부터 받은 게시글 목록을 JSON 배열로 변환
                             JSONArray items = response.getJSONArray("items");
+                            itemList.clear();  // 데이터 갱신 시 기존 아이템을 제거
 
-                            // 게시글 리스트를 초기화
-                            itemList.clear();
-
-                            // 서버에서 받은 게시글을 하나씩 처리
+                            // 서버에서 받은 게시글 목록을 로그인한 사용자와 비교하여 필터링
                             for (int i = 0; i < items.length(); i++) {
                                 JSONObject item = items.getJSONObject(i);
-                                String itemUserId = item.getString("user_id"); // 서버에서 받은 게시글의 user_id
+                                String itemUserId = item.getString("user_id"); // 게시글의 user_id
 
-                                // 로그인된 user_id와 비교하여 로그인한 사용자의 게시글만 필터링
+                                // 로그인된 사용자만 필터링하여 아이템 리스트에 추가
                                 if (itemUserId.equals(loggedInUserId)) {
                                     Item newItem = new Item(
                                             item.getInt("id"),
@@ -115,13 +140,12 @@ public class MylistActivity extends AppCompatActivity {
                                             item.getString("image_url"),
                                             itemUserId
                                     );
-                                    itemList.add(newItem);  // 로그인한 사용자의 게시글만 추가
+                                    itemList.add(newItem);
                                 }
                             }
 
-                            // 데이터 변경을 RecyclerView에 알림
+                            // 아이템 목록이 갱신되었음을 RecyclerView에 알림
                             adapter.notifyDataSetChanged();
-
                         } catch (JSONException e) {
                             Log.e("MylistActivity", "JSON Parsing error: " + e.getMessage());
                         }
@@ -134,6 +158,6 @@ public class MylistActivity extends AppCompatActivity {
                     }
                 });
 
-        queue.add(request);
+        queue.add(request);  // 네트워크 요청 큐에 추가
     }
 }
