@@ -67,7 +67,7 @@ def upload_item():
         title = request.form['title']
         description = request.form['description']
         price = request.form['price']
-        user_id = request.form['user_id']
+        user_id = request.form['user_id']  # 사용자의 이름 (user_id)로 받아옴
 
         saved_image_paths = []
         for file_key in request.files:
@@ -91,14 +91,13 @@ def upload_item():
         INSERT INTO items (title, description, price, image_path, user_id)
         VALUES (%s, %s, %s, %s, %s)
         """
-        cursor.execute(query, (title, description, price, image_paths_string, user_id))
+        cursor.execute(query, (title, description, price, image_paths_string, user_id))  # user_id는 사용자 이름
         connection.commit()
 
         return jsonify({"message": "등록 성공", "image_count": len(saved_image_paths)}), 201
     except Exception as e:
         print("Upload Error:", str(e))
         return jsonify({"message": "등록 실패", "error": str(e)}), 400
-
 
 
 @app.route('/get_items', methods=['GET'])
@@ -115,17 +114,22 @@ def get_items():
         cursor.execute(query)
         items = cursor.fetchall()
 
-        print(f"Fetched items: {items}")  # 디버깅을 위한 로그
-
         # 이미지를 클라이언트가 접근할 수 있도록 절대 경로 제공
         for item in items:
             server_ip = request.host_url.strip('/')  # 현재 서버의 IP와 포트 가져오기
-            item['image_url'] = f'{server_ip}/static/upload/{os.path.basename(item["image_path"])}'
 
-            item['user_id'] = item['user_id']
+            # 여러 이미지 경로 처리
+            image_paths = item['image_path'].split(',')
+            image_urls = []
+            for path in image_paths:
+                image_urls.append(f'{server_ip}/static/upload/{os.path.basename(path)}')
+
+            item['image_urls'] = image_urls  # 이미지 URL 배열로 반환
+
         return jsonify({"items": items}), 200
     except Exception as e:
         return jsonify({"message": "게시글 조회 실패", "error": str(e)}), 400
+
 
 # 이미지 제공 경로
 @app.route('/static/upload/<filename>')
