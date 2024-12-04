@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +38,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Item item = itemList.get(position);
         holder.title.setText(item.getTitle());
-        holder.price.setText(item.getPrice() + "원");
+
+        // 금액 포맷팅 (쉼표 추가)
+        String formattedPrice = formatPrice(item.getPrice());
+        holder.price.setText(formattedPrice + "원");
 
         // 서버에서 반환된 이미지 경로들을 전체 URL로 변환
         List<String> imageUrls = item.getImageUrls();  // 여러 이미지 URL을 가져옴
@@ -54,10 +58,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         // 아이템 클릭 시 상세보기 화면으로 이동
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, PostDetailActivity.class);
+            intent.putExtra("item_Userid", item.getUserId());  // ID 전달
             intent.putExtra("item_id", item.getId());  // ID 전달
             intent.putExtra("title", item.getTitle()); // 제목 전달
             intent.putExtra("description", item.getDescription()); // 설명 전달
-            intent.putExtra("price", item.getPrice() + "원"); // 가격 전달
+            intent.putExtra("price", formattedPrice + "원"); // 가격 전달
             intent.putStringArrayListExtra("image_urls", new ArrayList<>(imageUrls)); // 여러 이미지 URL 전달
             context.startActivity(intent);
         });
@@ -77,6 +82,21 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             title = itemView.findViewById(R.id.itemTitle);  // 제목
             price = itemView.findViewById(R.id.itemPrice);  // 가격
             image = itemView.findViewById(R.id.itemImage);  // 이미지
+        }
+    }
+
+    // 금액을 쉼표를 포함하여 포맷팅하는 메서드
+    private String formatPrice(String price) {
+        try {
+            // 금액을 숫자로 변환
+            long priceValue = Long.parseLong(price);
+
+            // 금액을 쉼표 포함하여 포맷팅
+            DecimalFormat formatter = new DecimalFormat("#,###");
+            return formatter.format(priceValue);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return price;  // 예외 처리 시 원래 값을 그대로 반환
         }
     }
 }

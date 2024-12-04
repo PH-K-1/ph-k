@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PostDetailActivity extends AppCompatActivity {
-    private TextView titleTextView, descriptionTextView, priceTextView;
+    private TextView titleTextView, descriptionTextView, priceTextView ,useridTextView;
     private ImageView backButton, shareButton;
     private ViewPager2 viewPager; // ViewPager2 추가
     private List<String> imageUrls = new ArrayList<>(); // 이미지 URL 리스트
@@ -31,6 +31,7 @@ public class PostDetailActivity extends AppCompatActivity {
         backButton = findViewById(R.id.backButton);  // 뒤로가기 버튼
         shareButton = findViewById(R.id.shareButton); // 공유하기 버튼
         viewPager = findViewById(R.id.viewPager); // ViewPager2 초기화
+        useridTextView = findViewById(R.id.useridTextView);
 
         // 뒤로가기 버튼 클릭 리스너 설정
         backButton.setOnClickListener(v -> finish());
@@ -42,6 +43,7 @@ public class PostDetailActivity extends AppCompatActivity {
             String title = intent.getStringExtra("title");
             String description = intent.getStringExtra("description");
             String price = intent.getStringExtra("price");
+            String Userid = intent.getStringExtra("item_Userid");
 
             // 공유할 URL 생성 (여기서는 예시로 게시글 URL을 만듦)
             String sharedUrl = "https://example.com/post?title=" + title;
@@ -58,11 +60,13 @@ public class PostDetailActivity extends AppCompatActivity {
         String title = intent.getStringExtra("title");
         String description = intent.getStringExtra("description");
         String price = intent.getStringExtra("price");
+        String Userid = intent.getStringExtra("item_Userid");
         ArrayList<String> imageUrlList = intent.getStringArrayListExtra("image_urls"); // 여러 이미지 URL 리스트
 
         titleTextView.setText(title);
         descriptionTextView.setText(description);
         priceTextView.setText(price);
+        useridTextView.setText(Userid);
 
         // 이미지 URL 리스트가 null이 아니면 ViewPager2에 데이터 설정
         if (imageUrlList != null) {

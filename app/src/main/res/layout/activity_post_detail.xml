@@ -1,16 +1,16 @@
-<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <!-- Main content layout -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- 뒤로가기 버튼 (아이콘) -->
         <ImageView
             android:id="@+id/backButton"
             android:layout_width="40dp"
@@ -19,11 +19,10 @@
             android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
             android:src="@drawable/baseline_arrow_back_ios_24"
-            android:contentDescription="뒤로가기 버튼"
+            android:contentDescription="Back Button"
             android:background="?attr/selectableItemBackground"
-            android:elevation="10dp"/>
+            android:elevation="10dp" />
 
-        <!-- ViewPager2 for product images (슬라이드 이미지) -->
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
@@ -32,41 +31,87 @@
             android:scaleType="centerCrop"
             android:layout_alignParentTop="true" />
 
-        <!-- Text View for product title -->
         <TextView
-            android:id="@+id/titleTextView"
+            android:id="@+id/useridLabelTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/viewPager"
-            android:layout_marginStart="14dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="16dp"
+            android:text="작성자"
+            android:textColor="#555555"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/useridTextView"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_below="@id/viewPager"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/outlined_border"
+            android:text="사용자 이름"
+            android:textColor="#333333"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingStart="10dp"/>
+
+        <TextView
+            android:id="@+id/titleLabelTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/useridTextView"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="16dp"
+            android:text="제목"
+            android:textColor="#555555"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/titleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@id/titleLabelTextView"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/outlined_border"
+            android:paddingStart="10dp"
             android:text="세련된 스마트폰"
             android:textColor="#333333"
             android:textSize="22sp"
             android:textStyle="bold" />
 
-        <!-- Divider below title -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
+        <TextView
+            android:id="@+id/descriptionLabelTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_below="@id/titleTextView"
-            android:layout_marginTop="8dp"
-            android:background="@android:color/darker_gray" />
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="16dp"
+            android:text="내용"
+            android:textColor="#555555"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-        <!-- Text View for product description -->
         <TextView
             android:id="@+id/descriptionTextView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/titleTextView"
-            android:layout_marginTop="16dp"
-            android:paddingStart="16dp"
+            android:layout_height="473dp"
+            android:layout_below="@id/descriptionLabelTextView"
+            android:layout_marginTop="8dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/outlined_border"
+            android:paddingStart="10dp"
             android:paddingEnd="16dp"
+            android:layout_marginBottom="67dp"
             android:text="상품 설명 텍스트"
-            android:textColor="#666666"
-            android:textSize="16sp" />
+            android:textColor="#333333"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_weight="1" />
 
-        <!-- 공유하기 버튼 -->
         <ImageView
             android:id="@+id/shareButton"
             android:layout_width="30dp"
@@ -75,11 +120,10 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:src="@android:drawable/ic_menu_share"
-            android:contentDescription="공유하기 버튼"
+            android:contentDescription="Share Button"
             android:background="?attr/selectableItemBackground"
-            android:elevation="10dp"/>
+            android:elevation="10dp" />
 
-        <!-- Bottom container for price and button -->
         <LinearLayout
             android:id="@+id/bottomContainer"
             android:layout_width="match_parent"
@@ -90,7 +134,6 @@
             android:padding="8dp"
             android:elevation="4dp">
 
-            <!-- Text View for product price -->
             <TextView
                 android:id="@+id/priceTextView"
                 android:layout_width="0dp"
@@ -102,7 +145,6 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <!-- MaterialButton to participate in auction -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buyButton"
                 android:layout_width="wrap_content"
