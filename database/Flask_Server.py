@@ -67,7 +67,7 @@ def upload_item():
         title = request.form['title']
         description = request.form['description']
         price = request.form['price']
-        user_id = request.form['user_id']
+        user_id = request.form['user_id']  # 사용자의 이름 (user_id)로 받아옴
 
         saved_image_paths = []
         for file_key in request.files:
@@ -91,7 +91,7 @@ def upload_item():
         INSERT INTO items (title, description, price, image_path, user_id)
         VALUES (%s, %s, %s, %s, %s)
         """
-        cursor.execute(query, (title, description, price, image_paths_string, user_id))
+        cursor.execute(query, (title, description, price, image_paths_string, user_id))  # user_id는 사용자 이름
         connection.commit()
 
         return jsonify({"message": "등록 성공", "image_count": len(saved_image_paths)}), 201
