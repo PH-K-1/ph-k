@@ -5,129 +5,138 @@
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:fitsSystemWindows="true">
 
+    <!-- 전체 화면 구성 -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/backButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            android:src="@drawable/baseline_arrow_back_ios_24"
-            android:contentDescription="Back Button"
-            android:background="?attr/selectableItemBackground"
-            android:elevation="10dp" />
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPager"
+        <!-- 상단바 고정 -->
+        <RelativeLayout
+            android:id="@+id/topBar"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_below="@id/backButton"
-            android:scaleType="centerCrop"
-            android:layout_alignParentTop="true" />
+            android:layout_height="50dp"
+            android:background="@android:color/white"
+            android:elevation="4dp"
+            android:padding="8dp">
 
-        <TextView
-            android:id="@+id/useridLabelTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/viewPager"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="16dp"
-            android:text="작성자"
-            android:textColor="#555555"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            <ImageView
+                android:id="@+id/backButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:src="@drawable/baseline_arrow_back_ios_24"
+                android:contentDescription="Back Button"
+                android:background="?attr/selectableItemBackground" />
 
-        <TextView
-            android:id="@+id/useridTextView"
+            <ImageView
+                android:id="@+id/shareButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:src="@android:drawable/ic_menu_share"
+                android:contentDescription="Share Button"
+                android:background="?attr/selectableItemBackground" />
+        </RelativeLayout>
+
+        <!-- 스크롤 가능한 콘텐츠 -->
+        <ScrollView
+            android:id="@+id/scrollView"
             android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:layout_below="@id/viewPager"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="50dp"
-            android:background="@drawable/outlined_border"
-            android:text="사용자 이름"
-            android:textColor="#333333"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:paddingStart="10dp"/>
+            android:layout_height="match_parent"
+            android:layout_below="@id/topBar"
+            android:layout_above="@id/bottomBar">
 
-        <TextView
-            android:id="@+id/titleLabelTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/useridTextView"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="16dp"
-            android:text="제목"
-            android:textColor="#555555"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/titleTextView"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_below="@id/titleLabelTextView"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/outlined_border"
-            android:paddingStart="10dp"
-            android:text="세련된 스마트폰"
-            android:textColor="#333333"
-            android:textSize="22sp"
-            android:textStyle="bold" />
+                <!-- 이미지 슬라이더 -->
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/viewPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_marginBottom="16dp" />
 
-        <TextView
-            android:id="@+id/descriptionLabelTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/titleTextView"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="16dp"
-            android:text="내용"
-            android:textColor="#555555"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+                <!-- 작성자 -->
+                <TextView
+                    android:id="@+id/useridLabelTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="작성자"
+                    android:textColor="#555555"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:paddingStart="4dp"/>
 
-        <TextView
-            android:id="@+id/descriptionTextView"
-            android:layout_width="match_parent"
-            android:layout_height="473dp"
-            android:layout_below="@id/descriptionLabelTextView"
-            android:layout_marginTop="8dp"
-            android:layout_alignParentBottom="true"
-            android:background="@drawable/outlined_border"
-            android:paddingStart="10dp"
-            android:paddingEnd="16dp"
-            android:layout_marginBottom="67dp"
-            android:text="상품 설명 텍스트"
-            android:textColor="#333333"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:layout_weight="1" />
+                <TextView
+                    android:id="@+id/useridTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/outlined_border"
+                    android:text="사용자 이름"
+                    android:textColor="#333333"
+                    android:textSize="18sp"
+                    android:paddingStart="10dp" />
 
-        <ImageView
-            android:id="@+id/shareButton"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:src="@android:drawable/ic_menu_share"
-            android:contentDescription="Share Button"
-            android:background="?attr/selectableItemBackground"
-            android:elevation="10dp" />
+                <!-- 제목 -->
+                <TextView
+                    android:id="@+id/titleLabelTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="제목"
+                    android:textColor="#555555"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:paddingStart="4dp"/>
 
+                <TextView
+                    android:id="@+id/titleTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/outlined_border"
+                    android:text="세련된 스마트폰"
+                    android:textColor="#333333"
+                    android:textSize="22sp"
+                    android:paddingStart="10dp" />
+
+                <!-- 내용 -->
+                <TextView
+                    android:id="@+id/descriptionLabelTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="내용"
+                    android:textColor="#555555"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:paddingStart="4dp"/>
+
+                <TextView
+                    android:id="@+id/descriptionTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/outlined_border"
+                    android:paddingStart="10dp"
+                    android:text="상품 설명 텍스트"
+                    android:textColor="#333333"
+                    android:textSize="22sp" />
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- 하단바 고정 -->
         <LinearLayout
-            android:id="@+id/bottomContainer"
+            android:id="@+id/bottomBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal"
             android:background="@android:color/white"
@@ -149,8 +158,6 @@
                 android:id="@+id/buyButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
                 android:backgroundTint="#FF5722"
                 android:text="경매 참여하기"
                 android:textColor="@android:color/white"
