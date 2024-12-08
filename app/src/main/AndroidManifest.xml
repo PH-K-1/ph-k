@@ -19,6 +19,7 @@
         <activity
             android:name=".BoardActivity"
             android:exported="true"
+            android:label="상품 목록"
             tools:ignore="WrongManifestParent">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,9 +31,10 @@
         <activity android:name=".SignupActivity" android:exported="true" tools:ignore="WrongManifestParent" />
         <activity android:name=".LoginActivity" android:exported="true" tools:ignore="WrongManifestParent" />
         <activity android:name=".ChatActivity" android:exported="true" tools:ignore="WrongManifestParent" />
-        <activity android:name=".RegisterActivity" android:exported="true" tools:ignore="WrongManifestParent" />
-        <activity android:name=".MylistActivity" android:exported="true" tools:ignore="WrongManifestParent" />
+        <activity android:name=".RegisterActivity" android:label="상품 등록" android:exported="true" tools:ignore="WrongManifestParent" />
+        <activity android:name=".MylistActivity" android:label="" android:exported="true" tools:ignore="WrongManifestParent" />
         <activity android:name=".PostDetailActivity" android:exported="true" tools:ignore="WrongManifestParent"/>
+       <!-- <activity android:name=".EditPostActivity" android:exported="true" tools:ignore="WrongManifestParent"/>-->
 
 
     </application>

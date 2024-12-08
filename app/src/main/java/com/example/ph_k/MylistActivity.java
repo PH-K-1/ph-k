@@ -1,17 +1,13 @@
 package com.example.ph_k;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.widget.Toolbar;
-
-import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,12 +32,6 @@ public class MylistActivity extends AppCompatActivity {
     private List<Item> itemList;
     private static final String URL = "http://192.168.200.114:7310/get_items";
 
-    // 드로어 관련 변수
-    private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
-    private BottomNavigationView bottomNavigationView;
-    private ActionBarDrawerToggle toggle;
-
     // 로그인된 user_id 저장할 변수
     private String loggedInUserId;
 
@@ -54,48 +44,17 @@ public class MylistActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         loggedInUserId = sharedPreferences.getString("username", null); // "username" 키로 로그인된 사용자 ID 가져오기
 
-        // 드로어와 하단 네비게이션 설정
-        drawerLayout = findViewById(R.id.drawerLayout);
-        navigationView = findViewById(R.id.navigationView);
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        // Toolbar 설정 (상단 뒤로가기 버튼 포함)
         Toolbar toolbar = findViewById(R.id.toolbar);
-
         setSupportActionBar(toolbar);
 
-        // ActionBarDrawerToggle 설정
-        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
-        // 네비게이션 아이템 선택 리스너
-        navigationView.setNavigationItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_register) {
-                startActivity(new Intent(MylistActivity.this, RegisterActivity.class));
-                return true;
-            } else if (itemId == R.id.nav_mypage) {
-                startActivity(new Intent(MylistActivity.this, MyPageActivity.class));
-                return true;
+        // 뒤로가기 버튼 활성화
+        ImageView backButton = findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();  // 뒤로가기 동작
             }
-            drawerLayout.closeDrawers();
-            return false;
-        });
-
-        // 하단 네비게이션 아이템 선택 리스너
-        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_register) {
-                startActivity(new Intent(MylistActivity.this, RegisterActivity.class));
-                return true;
-            } else if (itemId == R.id.nav_border) {
-                startActivity(new Intent(MylistActivity.this, BoardActivity.class));
-                return true;
-            } else if (itemId == R.id.nav_mypage) {
-                startActivity(new Intent(MylistActivity.this, MyPageActivity.class));
-                return true;
-            }
-            return false;
         });
 
         // RecyclerView 설정
