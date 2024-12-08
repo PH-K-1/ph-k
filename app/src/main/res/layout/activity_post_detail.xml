@@ -161,7 +161,8 @@
                 android:backgroundTint="#FF5722"
                 android:text="경매 참여하기"
                 android:textColor="@android:color/white"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:paddingTop="3dp"/>
         </LinearLayout>
     </RelativeLayout>
 </androidx.drawerlayout.widget.DrawerLayout>
