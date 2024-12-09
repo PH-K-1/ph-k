@@ -30,7 +30,7 @@ public class MylistActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ItemAdapter adapter;
     private List<Item> itemList;
-    private static final String URL = "http://192.168.200.114:7310/get_items";
+    private static final String URL = "http://192.168.55.231:7310/get_items";
 
     // 로그인된 user_id 저장할 변수
     private String loggedInUserId;
@@ -66,7 +66,8 @@ public class MylistActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         itemList = new ArrayList<>();
-        adapter = new ItemAdapter(this, itemList);
+        // ItemAdapter에 로그인된 user_id를 전달
+        adapter = new ItemAdapter(this, itemList, loggedInUserId);
         recyclerView.setAdapter(adapter);
 
         fetchItems();  // 서버에서 게시글 데이터를 가져옵니다.
