@@ -136,7 +136,7 @@ def get_items():
 def delete_item_by_id(item_id):
     global connection
     try:
-        # MySQL 연결 확인 및 재연결
+        # MySQL 연결 확인 및 재연결.
         if not connection.is_connected():
             connection = create_connection()
 
