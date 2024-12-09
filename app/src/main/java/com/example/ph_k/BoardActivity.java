@@ -1,9 +1,10 @@
 package com.example.ph_k;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -29,7 +30,10 @@ public class BoardActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ItemAdapter adapter;
     private List<Item> itemList;
-    private static final String URL = "http://192.168.200.114:7310/get_items";
+    private static final String URL = "http://192.168.55.231:7310/get_items";
+
+    // 로그인된 사용자 ID를 저장할 변수
+    private String loggedInUserId;
 
     // 드로어 관련 변수
     private DrawerLayout drawerLayout;
@@ -41,6 +45,10 @@ public class BoardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
+
+        // SharedPreferences에서 로그인된 사용자 ID 가져오기
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        loggedInUserId = sharedPreferences.getString("username", null); // "username" 키로 로그인된 사용자 ID 가져오기
 
         // 드로어와 하단 네비게이션 설정
         drawerLayout = findViewById(R.id.drawerLayout);
@@ -102,7 +110,7 @@ public class BoardActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         itemList = new ArrayList<>();
-        adapter = new ItemAdapter(this, itemList);
+        adapter = new ItemAdapter(this, itemList, loggedInUserId); // loggedInUserId 전달
         recyclerView.setAdapter(adapter);
 
         fetchItems();
@@ -162,5 +170,3 @@ public class BoardActivity extends AppCompatActivity {
         queue.add(request);
     }
 }
-
-

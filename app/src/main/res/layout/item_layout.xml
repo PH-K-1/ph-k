@@ -23,8 +23,7 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:scaleType="centerCrop"
-                android:layout_marginEnd="10dp"/>
-            <!-- 동적으로 추가되는 이미지들이 가로로 배치됨 -->
+                android:layout_marginEnd="10dp" />
         </LinearLayout>
     </HorizontalScrollView>
 
@@ -43,7 +42,7 @@
             android:text="Item Title"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_marginBottom="4dp"/>
+            android:layout_marginBottom="4dp" />
 
         <!-- 가격 -->
         <TextView
@@ -53,8 +52,19 @@
             android:text="Price"
             android:textSize="16sp"
             android:textColor="#FF5722"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="4dp" />
 
     </LinearLayout>
 
+    <!-- 메뉴 버튼 -->
+    <ImageButton
+        android:id="@+id/menuButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/ic_dehaze"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="More Options"
+        android:layout_gravity="center_vertical"
+        android:padding="8dp" />
 </LinearLayout>
