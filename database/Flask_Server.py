@@ -17,6 +17,7 @@ def create_connection():
         database="auction_db"
     )
 
+# 전역 변수로 connection을 설정
 connection = create_connection()
 
 # 이미지 저장 경로 설정
@@ -102,14 +103,14 @@ def upload_item():
 
 @app.route('/get_items', methods=['GET'])
 def get_items():
+    global connection
     try:
-        global connection
         if not connection.is_connected():
             connection.close()
             connection = create_connection()
 
         # user_id 없이 모든 아이템 반환
-        cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor(dictionary=True)  # dictionary=True 추가
         query = "SELECT id, title, description, price, image_path, user_id FROM items"
         cursor.execute(query)
         items = cursor.fetchall()
@@ -129,6 +130,86 @@ def get_items():
         return jsonify({"items": items}), 200
     except Exception as e:
         return jsonify({"message": "게시글 조회 실패", "error": str(e)}), 400
+
+# 게시글 삭제 기능
+@app.route('/posts/<int:item_id>', methods=['DELETE'])
+def delete_item_by_id(item_id):
+    global connection
+    try:
+        # MySQL 연결 확인 및 재연결
+        if not connection.is_connected():
+            connection = create_connection()
+
+        # 아이템 존재 확인
+        cursor = connection.cursor(dictionary=True)  # dictionary=True 추가
+        cursor.execute("SELECT user_id, image_path FROM items WHERE id = %s", (item_id,))
+        item = cursor.fetchone()
+
+        if not item:
+            return jsonify({"message": "아이템이 존재하지 않습니다."}), 404
+
+        # 아이템 삭제
+        cursor.execute("DELETE FROM items WHERE id = %s", (item_id,))
+        connection.commit()
+
+        # 이미지 파일 삭제
+        image_paths = item['image_path'].split(',')
+        for path in image_paths:
+            try:
+                os.remove(path)
+            except OSError as e:
+                print("File Delete Error:", e)
+
+        return jsonify({"message": "게시글 삭제 성공"}), 200
+    except Exception as e:
+        print("Delete Item Error:", str(e))
+        return jsonify({"message": "게시글 삭제 실패", "error": str(e)}), 400
+
+# 게시글 수정 기능 (PUT)
+@app.route('/posts/<int:item_id>', methods=['PUT'])
+def update_item_by_id(item_id):
+    global connection
+    try:
+        # item_id가 유효한지 확인
+        if item_id <= 0:
+            return jsonify({"message": "잘못된 아이템 ID입니다."}), 400
+
+        data = request.get_json()
+        title = data['title']
+        description = data['description']
+        price = data['price']
+        image_urls = data['imageUrls']
+
+        # 기존 user_id는 데이터베이스에서 조회하여 사용
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute("SELECT user_id FROM items WHERE id = %s", (item_id,))
+        item = cursor.fetchone()
+
+        if not item:
+            return jsonify({"message": "아이템이 존재하지 않습니다."}), 404
+
+        user_id = item['user_id']  # 기존 user_id 가져오기
+
+        # 이미지 경로를 처리 (필요시)
+        image_paths_string = ','.join(image_urls)
+
+        if not connection.is_connected():
+            connection = create_connection()
+
+        cursor = connection.cursor()
+        query = """
+        UPDATE items
+        SET title = %s, description = %s, price = %s, image_path = %s, user_id = %s
+        WHERE id = %s
+        """
+        cursor.execute(query, (title, description, price, image_paths_string, user_id, item_id))
+        connection.commit()
+
+        return jsonify({"message": "게시글 수정 성공"}), 200
+    except Exception as e:
+        print("Update Item Error:", str(e))
+        return jsonify({"message": "게시글 수정 실패", "error": str(e)}), 400
+
 
 
 # 이미지 제공 경로
