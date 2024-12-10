@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,12 +36,12 @@ public class RegisterActivity extends AppCompatActivity {
     private ImageView imagePreview1, imagePreview2, imagePreview3, imagePreview4, imagePreview5;
 
     private List<Uri> imageUris = new ArrayList<>();
+    private EditText editPrice; // 가격 EditText
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
 
         // Toolbar 설정
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -60,9 +62,43 @@ public class RegisterActivity extends AppCompatActivity {
 
         EditText editTitle = findViewById(R.id.edit_title);
         EditText editDescription = findViewById(R.id.edit_description);
-        EditText editPrice = findViewById(R.id.edit_price);
+        editPrice = findViewById(R.id.edit_price);
         ImageView buttonUploadImage = findViewById(R.id.button_upload_image);
         Button buttonRegister = findViewById(R.id.button_register);
+
+        // 가격 입력 시 쉼표 자동 추가
+        editPrice.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+                // 아무 것도 하지 않음
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int after) {
+                // 쉼표 처리
+                if (charSequence.length() > 0) {
+                    String cleanString = charSequence.toString().replaceAll("[,]", ""); // 기존 쉼표 제거
+                    try {
+                        double parsed = Double.parseDouble(cleanString); // 문자열을 숫자로 변환
+                        String formatted = String.format("%,d", (int) parsed); // 쉼표 추가
+                        if (!formatted.equals(editPrice.getText().toString())) { // 값이 변경된 경우에만 수정
+                            // setText로 가격을 다시 설정
+                            editPrice.setText(formatted);
+                            // 커서를 텍스트 끝으로 이동
+                            editPrice.setSelection(formatted.length());
+                        }
+                    } catch (NumberFormatException e) {
+                        // 숫자 변환 중 예외 발생 시 아무것도 하지 않음
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                // 아무 것도 하지 않음
+            }
+        });
+
 
         // 이미지 업로드 버튼 클릭 리스너
         buttonUploadImage.setOnClickListener(v -> pickImage());
@@ -133,6 +169,9 @@ public class RegisterActivity extends AppCompatActivity {
     private void uploadData(String title, String description, String price, List<Uri> imageUris) {
         new Thread(() -> {
             try {
+                // Remove the commas from the price before sending it to the server
+                String cleanPrice = price.replaceAll("[,]", ""); // Remove commas
+
                 OkHttpClient client = new OkHttpClient.Builder()
                         .connectTimeout(30, TimeUnit.SECONDS)
                         .writeTimeout(30, TimeUnit.SECONDS)
@@ -142,7 +181,7 @@ public class RegisterActivity extends AppCompatActivity {
                 MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
                 builder.addFormDataPart("title", title);
                 builder.addFormDataPart("description", description);
-                builder.addFormDataPart("price", price);
+                builder.addFormDataPart("price", cleanPrice); // Use cleanPrice without commas
 
                 SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                 String username = sharedPreferences.getString("username", null);
@@ -186,4 +225,5 @@ public class RegisterActivity extends AppCompatActivity {
             }
         }).start();
     }
+
 }
