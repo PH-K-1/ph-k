@@ -10,6 +10,10 @@
         android:icon="@drawable/register"
         android:title="등록" />
     <item
+        android:id="@+id/chat"
+        android:icon="@drawable/chatp"
+        android:title="채팅" />
+    <item
         android:id="@+id/nav_mypage"
         android:icon="@drawable/mypage"
         android:title="내 정보" />

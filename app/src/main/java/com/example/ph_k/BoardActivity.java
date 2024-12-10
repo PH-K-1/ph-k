@@ -3,6 +3,8 @@ package com.example.ph_k;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.Toast; // Toast 추가
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,10 +28,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BoardActivity extends AppCompatActivity {
+
     private RecyclerView recyclerView;
     private ItemAdapter adapter;
     private List<Item> itemList;
-    private static final String URL = "http://192.168.200.114:7310/get_items";
+    private static final String URL = BuildConfig.BASE_URL + "/get_items";
 
     // 드로어 관련 변수
     private DrawerLayout drawerLayout;
@@ -89,6 +92,10 @@ public class BoardActivity extends AppCompatActivity {
                 Intent intent = new Intent(BoardActivity.this, MyPageActivity.class);
                 startActivity(intent);
                 return true;
+            } else if (itemId == R.id.chat) { // 채팅 메뉴 항목 선택 시
+                Intent intent = new Intent(BoardActivity.this, ChatActivity.class);
+                startActivity(intent);
+                return true;
             }
             return false;
         });
@@ -105,10 +112,25 @@ public class BoardActivity extends AppCompatActivity {
         adapter = new ItemAdapter(this, itemList);
         recyclerView.setAdapter(adapter);
 
+        // 채팅 버튼 설정 (여전히 별도의 버튼으로 채팅 화면으로 이동)
+        Button chatButton = findViewById(R.id.chatButton); // activity_board.xml에서 추가한 버튼
+        chatButton.setOnClickListener(v -> {
+            // 채팅 버튼 클릭 시 로그 추가
+            Log.d("BoardActivity", "채팅 버튼 클릭됨");
+
+            // 채팅 화면으로 이동
+            Intent intent = new Intent(BoardActivity.this, ChatActivity.class);
+            startActivity(intent);
+        });
+
+        // 아이템 데이터 요청
         fetchItems();
     }
 
     private void fetchItems() {
+        // 네트워크 요청 대기 중 로딩 표시
+        Toast.makeText(this, "데이터를 불러오는 중...", Toast.LENGTH_SHORT).show();
+
         RequestQueue queue = Volley.newRequestQueue(this);
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL, null,
@@ -149,6 +171,7 @@ public class BoardActivity extends AppCompatActivity {
                             adapter.notifyDataSetChanged(); // 데이터 변경을 RecyclerView에 알림
                         } catch (JSONException e) {
                             Log.e("BoardActivity", "JSON Parsing error: " + e.getMessage());
+                            Toast.makeText(BoardActivity.this, "아이템을 불러오는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
@@ -156,11 +179,10 @@ public class BoardActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e("BoardActivity", "Volley error: " + error.getMessage());
+                        Toast.makeText(BoardActivity.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
                     }
                 });
 
         queue.add(request);
     }
 }
-
-

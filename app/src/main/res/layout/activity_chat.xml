@@ -1,34 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="top"
     android:orientation="vertical">
 
-    <!-- 메시지 출력 영역 -->
+    <!-- 상단 바 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/textView333"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:layout_marginBottom="28dp"
+            android:fontFamily="sans-serif-black"
+            android:text="채팅"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- 구분선 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#F3F3F3" />
+
+    <!-- 로그인 후 이용 가능 메시지 -->
     <TextView
-        android:id="@+id/messageDisplay"
+        android:id="@+id/afterLoginTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="로그인 후 이용 가능합니다."
+        android:visibility="gone"
+        tools:ignore="HardcodedText" />  <!-- 기본적으로 숨김 -->
+
+    <!-- 채팅방 목록 RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chattingRoomRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:layout_weight="1"
-        android:text="채팅 메시지 표시"
-        android:padding="16dp"
-        android:textSize="16sp"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"
+        tools:listitem="@layout/custom_chatlist_listview" />
 
-    <!-- 메시지 입력 필드 -->
-    <EditText
-        android:id="@+id/messageInput"
+    <!-- 메시지 입력 및 전송 버튼 -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="메시지를 입력하세요"
-        android:padding="16dp"
-        android:inputType="text" />
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:layout_marginTop="10dp">
 
-    <!-- 보내기 버튼 -->
-    <Button
-        android:id="@+id/sendButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="보내기"
-        android:onClick="sendMessage" />
+        <!-- 메시지 입력 EditText -->
+        <EditText
+            android:id="@+id/messageInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="메시지를 입력하세요"
+            android:padding="10dp"
+            android:inputType="text"
+            android:layout_gravity="center_vertical" />
+
+        <!-- 전송 버튼 -->
+        <ImageView
+            android:id="@+id/sendButton"
+            android:layout_width="46dp"
+            android:layout_height="42dp"
+            android:layout_marginLeft="8dp"
+            android:layout_gravity="center_vertical|end"
+            android:contentDescription="전송 버튼"
+            android:src="@drawable/sendbutton" />
+    </LinearLayout>
+
 </LinearLayout>
