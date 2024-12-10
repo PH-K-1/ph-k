@@ -208,7 +208,7 @@ public class EditActivity extends AppCompatActivity {
 
                 RequestBody requestBody = builder.build();
                 Request request = new Request.Builder()
-                        .url("http://192.168.55.231:7310/upload")  // 서버 URL
+                        .url("http://192.168.200.114:7310/upload")  // 서버 URL
                         .post(requestBody)
                         .build();
 
@@ -242,7 +242,7 @@ public class EditActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
 
                 // 게시글 삭제 요청을 위한 URL
-                String url = "http://192.168.55.231:7310/posts/" + postId;
+                String url = "http://192.168.200.114:7310/posts/" + postId;
                 Request request = new Request.Builder()
                         .url(url)
                         .delete()  // DELETE 요청 보내기
