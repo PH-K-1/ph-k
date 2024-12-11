@@ -2,6 +2,7 @@ package com.example.ph_k;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,6 +17,7 @@ import java.util.List;
 public class PostDetailActivity extends AppCompatActivity {
     private TextView titleTextView, descriptionTextView, priceTextView, useridTextView;
     private ImageView backButton, shareButton;
+    private Button buyButton;  // Buy 버튼 추가
     private ViewPager2 viewPager; // ViewPager2 추가
     private List<String> imageUrls = new ArrayList<>(); // 이미지 URL 리스트
 
@@ -30,7 +32,8 @@ public class PostDetailActivity extends AppCompatActivity {
         priceTextView = findViewById(R.id.priceTextView);
         backButton = findViewById(R.id.backButton);  // 뒤로가기 버튼
         shareButton = findViewById(R.id.shareButton); // 공유하기 버튼
-        viewPager = findViewById(R.id.viewPager); // ViewPager2 초기화
+        buyButton = findViewById(R.id.buyButton);    // Buy 버튼 초기화
+        viewPager = findViewById(R.id.viewPager);    // ViewPager2 초기화
         useridTextView = findViewById(R.id.useridTextView);
 
         // 뒤로가기 버튼 클릭 리스너 설정
@@ -76,5 +79,19 @@ public class PostDetailActivity extends AppCompatActivity {
         // ViewPager2에 어댑터 설정
         ImageAdapter adapter = new ImageAdapter(this, imageUrls);
         viewPager.setAdapter(adapter);
+
+        // Buy 버튼 클릭 리스너 설정
+        buyButton.setOnClickListener(v -> {
+            // ChatActivity로 넘어가기 위한 Intent 생성
+            Intent chatIntent = new Intent(PostDetailActivity.this, ChatActivity.class);
+
+            // 필요한 데이터를 전달 (예시로 게시글의 제목과 가격을 넘긴다고 가정)
+            chatIntent.putExtra("postTitle", title);
+            chatIntent.putExtra("postPrice", price);
+            chatIntent.putExtra("postUserId", userId);  // 게시글의 userId도 함께 전달
+
+            startActivity(chatIntent);  // ChatActivity로 이동
+        });
     }
 }
+

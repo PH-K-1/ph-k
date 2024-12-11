@@ -144,6 +144,12 @@ public class MyPageActivity extends AppCompatActivity {
                     // 현재 Activity가 MyPageActivity이므로 아무 일도 하지 않음
                     return true;
                 }
+                else if (itemId == R.id.nav_chat) {
+                    Intent intent = new Intent(MyPageActivity.this, ChatActivity.class);
+                    startActivity(intent);
+                    return true;
+                }
+
                 return false;
             }
         });

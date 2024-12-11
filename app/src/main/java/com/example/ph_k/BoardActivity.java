@@ -85,7 +85,11 @@ public class BoardActivity extends AppCompatActivity {
                 return true;
             } else if (itemId == R.id.nav_border) {
                 return true;
-            } else if (itemId == R.id.nav_mypage) {
+            } else if (itemId == R.id.nav_chat) {
+                startActivity(new Intent(BoardActivity.this, ChatActivity.class));
+                return true;
+            }
+            else if (itemId == R.id.nav_mypage) {
                 startActivity(new Intent(BoardActivity.this, MyPageActivity.class));
                 return true;
             }
