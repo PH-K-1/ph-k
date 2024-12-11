@@ -58,11 +58,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         String formattedPrice = formatPrice(item.getPrice());
         holder.price.setText(formattedPrice + "원");
 
-        // 카운트다운 설정
+        // 사용자가 입력한 deadline 값 사용
         String deadline = item.getDeadline();
         if ("없음".equals(deadline)) {
             holder.deadline.setText("종료: 없음");
         } else {
+            // 카운트다운 시작
             startCountdown(holder, deadline);
         }
 
@@ -113,6 +114,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         }
     }
 
+
     @Override
     public int getItemCount() {
         return itemList.size();
@@ -153,7 +155,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 return;
             }
 
-            runnable = new Runnable() {
+            handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     long remainingTime = deadlineDate.getTime() - System.currentTimeMillis();
@@ -166,13 +168,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                         handler.removeCallbacks(this); // 타이머 종료
                     }
                 }
-            };
-            handler.post(runnable);
+            }, 0);
         } catch (Exception e) {
             e.printStackTrace();
             holder.deadline.setText("종료: 없음");
         }
     }
+
 
     private String formatTime(long millis) {
         long days = TimeUnit.MILLISECONDS.toDays(millis);

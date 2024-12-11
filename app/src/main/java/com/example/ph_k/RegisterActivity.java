@@ -1,6 +1,8 @@
 package com.example.ph_k;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -21,6 +23,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -36,7 +39,8 @@ public class RegisterActivity extends AppCompatActivity {
     private ImageView imagePreview1, imagePreview2, imagePreview3, imagePreview4, imagePreview5;
 
     private List<Uri> imageUris = new ArrayList<>();
-    private EditText editPrice; // 가격 EditText
+    private Button buttonSelectDeadline;  // 날짜와 시간 선택 버튼
+    private String selectedDeadline;      // 선택된 데드라인을 저장할 변수
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,46 +66,13 @@ public class RegisterActivity extends AppCompatActivity {
 
         EditText editTitle = findViewById(R.id.edit_title);
         EditText editDescription = findViewById(R.id.edit_description);
-        editPrice = findViewById(R.id.edit_price);
-        ImageView buttonUploadImage = findViewById(R.id.button_upload_image);
+        EditText editPrice = findViewById(R.id.edit_price);
+        buttonSelectDeadline = findViewById(R.id.edit_deadline);  // 날짜 버튼 초기화
+        ImageView buttonUploadImage = findViewById(R.id.button_upload_image);  // 이미지 업로드 버튼
         Button buttonRegister = findViewById(R.id.button_register);
 
-        // 가격 입력 시 쉼표 자동 추가
-        editPrice.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
-                // 아무 것도 하지 않음
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int start, int before, int after) {
-                // 쉼표 처리
-                if (charSequence.length() > 0) {
-                    String cleanString = charSequence.toString().replaceAll("[,]", ""); // 기존 쉼표 제거
-                    try {
-                        double parsed = Double.parseDouble(cleanString); // 문자열을 숫자로 변환
-                        String formatted = String.format("%,d", (int) parsed); // 쉼표 추가
-                        if (!formatted.equals(editPrice.getText().toString())) { // 값이 변경된 경우에만 수정
-                            // setText로 가격을 다시 설정
-                            editPrice.setText(formatted);
-                            // 커서를 텍스트 끝으로 이동
-                            editPrice.setSelection(formatted.length());
-                        }
-                    } catch (NumberFormatException e) {
-                        // 숫자 변환 중 예외 발생 시 아무것도 하지 않음
-                    }
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                // 아무 것도 하지 않음
-            }
-        });
-
-
-        // 이미지 업로드 버튼 클릭 리스너
-        buttonUploadImage.setOnClickListener(v -> pickImage());
+        // 날짜와 시간 선택 버튼 클릭 리스너
+        buttonSelectDeadline.setOnClickListener(v -> showDateTimePicker());
 
         // 등록 버튼 클릭 리스너
         buttonRegister.setOnClickListener(v -> {
@@ -109,13 +80,16 @@ public class RegisterActivity extends AppCompatActivity {
             String description = editDescription.getText().toString();
             String price = editPrice.getText().toString();
 
-            if (imageUris.isEmpty() || title.isEmpty() || description.isEmpty() || price.isEmpty()) {
+            if (imageUris.isEmpty() || title.isEmpty() || description.isEmpty() || price.isEmpty() || selectedDeadline == null || selectedDeadline.isEmpty()) {
                 Toast.makeText(this, "모든 항목을 입력하세요.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            uploadData(title, description, price, imageUris);
+            uploadData(title, description, price, selectedDeadline, imageUris);  // 데드라인 포함하여 전송
         });
+
+        // 이미지 업로드 버튼 클릭 리스너
+        buttonUploadImage.setOnClickListener(v -> pickImage());
     }
 
     @Override
@@ -127,6 +101,29 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed(); // 시스템의 기본 뒤로가기 동작 수행
+    }
+
+    private void showDateTimePicker() {
+        // 현재 날짜와 시간으로 설정
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+
+        // 날짜 선택 다이얼로그
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, year1, month1, dayOfMonth1) -> {
+            // 시간 선택 다이얼로그
+            TimePickerDialog timePickerDialog = new TimePickerDialog(this, (view1, hourOfDay1, minute1) -> {
+                // 선택된 날짜와 시간 결합
+                selectedDeadline = year1 + "-" + (month1 + 1) + "-" + dayOfMonth1 + " " + hourOfDay1 + ":" + minute1;
+                buttonSelectDeadline.setText(selectedDeadline);  // 버튼에 선택된 날짜와 시간 표시
+            }, hourOfDay, minute, false);
+            timePickerDialog.show();
+        }, year, month, dayOfMonth);
+
+        datePickerDialog.show();
     }
 
     private void pickImage() {
@@ -166,7 +163,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    private void uploadData(String title, String description, String price, List<Uri> imageUris) {
+    private void uploadData(String title, String description, String price, String deadline, List<Uri> imageUris) {
         new Thread(() -> {
             try {
                 // Remove the commas from the price before sending it to the server
@@ -182,6 +179,7 @@ public class RegisterActivity extends AppCompatActivity {
                 builder.addFormDataPart("title", title);
                 builder.addFormDataPart("description", description);
                 builder.addFormDataPart("price", cleanPrice); // Use cleanPrice without commas
+                builder.addFormDataPart("deadline", deadline); // 데드라인 추가
 
                 SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                 String username = sharedPreferences.getString("username", null);
@@ -225,5 +223,4 @@ public class RegisterActivity extends AppCompatActivity {
             }
         }).start();
     }
-
 }
