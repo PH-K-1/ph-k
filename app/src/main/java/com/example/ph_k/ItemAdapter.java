@@ -161,7 +161,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                     long remainingTime = deadlineDate.getTime() - System.currentTimeMillis();
                     if (remainingTime > 0) {
                         String formattedTime = formatTime(remainingTime);
-                        holder.deadline.setText("종료까지: " + formattedTime);
+                        holder.deadline.setText("경매 종료: " + formattedTime);
                         handler.postDelayed(this, 1000); // 1초마다 업데이트
                     } else {
                         holder.deadline.setText("종료됨");
@@ -204,8 +204,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         intent.putExtra("price", item.getPrice());
         intent.putStringArrayListExtra("image_urls", new ArrayList<>(item.getImageUrls()));
         intent.putExtra("item_Userid", item.getUserId());
+        intent.putExtra("deadline", item.getDeadline()); // deadline 값 추가
         context.startActivity(intent);
     }
+
 
     private void deleteItem(Item item, int position) {
         deleteItemFromServer(String.valueOf(item.getId()), new OnDeleteItemListener() {

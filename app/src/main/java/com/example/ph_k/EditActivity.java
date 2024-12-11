@@ -1,5 +1,7 @@
 package com.example.ph_k;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -11,6 +13,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.Button;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -21,7 +25,9 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -29,6 +35,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
 
 public class EditActivity extends AppCompatActivity {
 
@@ -38,6 +45,8 @@ public class EditActivity extends AppCompatActivity {
 
     private ImageView imagePreview1, imagePreview2, imagePreview3, imagePreview4, imagePreview5;
     private ArrayList<String> imageUrls = new ArrayList<>(); // 이미지 URL 리스트
+    private Button buttonSelectDeadline;  // 날짜와 시간 선택 버튼
+    private String selectedDeadline;      // 선택된 데드라인을 저장할 변수
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,16 +56,20 @@ public class EditActivity extends AppCompatActivity {
         // XML에 정의된 ID와 연결
         editTitle = findViewById(R.id.edit_title);
         editDescription = findViewById(R.id.edit_description);
+        buttonSelectDeadline = findViewById(R.id.edit_deadline);  // 날짜 버튼 초기화
         editPrice = findViewById(R.id.edit_price);
         saveButton = findViewById(R.id.button_save);
 
+        // 날짜와 시간 선택 버튼 클릭 리스너
+        buttonSelectDeadline.setOnClickListener(v -> showDateTimePicker());
+
+        // 이미지 미리보기 클릭 시 이미지 선택기 열기
         imagePreview1 = findViewById(R.id.image_preview_1);
         imagePreview2 = findViewById(R.id.image_preview_2);
         imagePreview3 = findViewById(R.id.image_preview_3);
         imagePreview4 = findViewById(R.id.image_preview_4);
         imagePreview5 = findViewById(R.id.image_preview_5);
 
-        // 이미지 미리보기 클릭 시 이미지 선택기 열기
         imagePreview1.setOnClickListener(v -> openImagePicker(1)); // 1번 이미지
         imagePreview2.setOnClickListener(v -> openImagePicker(2)); // 2번 이미지
         imagePreview3.setOnClickListener(v -> openImagePicker(3)); // 3번 이미지
@@ -81,6 +94,33 @@ public class EditActivity extends AppCompatActivity {
 
         // 이미지 로드
         loadImages(imageUrls);
+    }
+
+    private void showDateTimePicker() {
+        // 현재 날짜와 시간으로 DatePickerDialog 및 TimePickerDialog 설정
+        final Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+
+        // 날짜 선택
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                (view, year1, month1, dayOfMonth1) -> {
+                    // 선택된 날짜 저장
+                    selectedDeadline = year1 + "-" + (month1 + 1) + "-" + dayOfMonth1;
+
+                    // 시간 선택
+                    TimePickerDialog timePickerDialog = new TimePickerDialog(this,
+                            (view1, hourOfDay, minute1) -> {
+                                // 선택된 시간 저장
+                                selectedDeadline += " " + hourOfDay + ":" + minute1;
+                                buttonSelectDeadline.setText("경매 마감일:  " + selectedDeadline);  // 버튼에 데드라인 표시
+                            }, hour, minute, true);
+                    timePickerDialog.show();
+                }, year, month, dayOfMonth);
+        datePickerDialog.show();
     }
 
     private void loadImages(ArrayList<String> imageUrls) {
@@ -158,37 +198,39 @@ public class EditActivity extends AppCompatActivity {
         String updatedTitle = editTitle.getText().toString();
         String updatedDescription = editDescription.getText().toString();
         String updatedPrice = editPrice.getText().toString();
+        String updatedDeadLine = selectedDeadline;
 
-        // SharedPreferences에서 로그인된 사용자 ID 가져오기
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-        String updatedUserId = sharedPreferences.getString("username", ""); // 빈 문자열일 경우 처리 필요
+        String updatedUserId = sharedPreferences.getString("username", "");
 
-        // 필수 필드 확인
-        if (updatedTitle.isEmpty() || updatedDescription.isEmpty()) {
-            Toast.makeText(this, "제목과 내용은 필수 입력 사항입니다.", Toast.LENGTH_SHORT).show();
+        if (updatedTitle.isEmpty() || updatedDescription.isEmpty()  || selectedDeadline == null || selectedDeadline.isEmpty()) {
+            Toast.makeText(this, "모든 항목을 입력하세요.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // 이미지 URI 리스트로 변환
         List<Uri> imageUris = new ArrayList<>();
         for (String url : imageUrls) {
             imageUris.add(Uri.parse(url));
         }
 
-        // 게시글 수정 전 기존 게시글 삭제
-        deleteOldPost(postId);  // 게시글 삭제를 별도 스레드로 처리
-
-        // 게시글과 이미지를 업로드
         new Thread(() -> {
             try {
-                OkHttpClient client = new OkHttpClient();
+                // 1. 기존 게시글 삭제
+                deleteOldPost(postId);
 
-                // 이미지 업로드 요청
+                // 2. 새로운 게시글 생성
+                OkHttpClient client = new OkHttpClient.Builder()
+                        .connectTimeout(60, TimeUnit.SECONDS) // 연결 타임아웃 설정 (60초)
+                        .writeTimeout(60, TimeUnit.SECONDS)  // 요청 쓰기 타임아웃 설정 (60초)
+                        .readTimeout(60, TimeUnit.SECONDS)   // 응답 읽기 타임아웃 설정 (60초)
+                        .build();
+
                 MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
                 builder.addFormDataPart("title", updatedTitle);
                 builder.addFormDataPart("description", updatedDescription);
                 builder.addFormDataPart("price", updatedPrice);
                 builder.addFormDataPart("user_id", updatedUserId);
+                builder.addFormDataPart("deadline", updatedDeadLine);
 
                 for (int i = 0; i < imageUris.size(); i++) {
                     Uri imageUri = imageUris.get(i);
@@ -208,32 +250,27 @@ public class EditActivity extends AppCompatActivity {
 
                 RequestBody requestBody = builder.build();
                 Request request = new Request.Builder()
-                        .url("http://192.168.200.114:7310/upload")  // 서버 URL
+                        .url("http://192.168.200.114:7310/upload")
                         .post(requestBody)
                         .build();
 
                 Response response = client.newCall(request).execute();
-
-                // 이미지 업로드가 성공하면 새로운 게시글을 저장
                 if (response.isSuccessful()) {
                     runOnUiThread(() -> {
-                        Toast.makeText(this, "게시글이 업로드되었습니다.", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(EditActivity.this, MylistActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
+                        Toast.makeText(this, "게시글이 수정되었습니다.", Toast.LENGTH_SHORT).show();
                         finish();
                     });
                 } else {
-                    runOnUiThread(() -> {
-                        Toast.makeText(this, "게시글 업로드 실패", Toast.LENGTH_SHORT).show();
-                    });
+                    runOnUiThread(() -> Toast.makeText(this, "게시글 수정 실패", Toast.LENGTH_SHORT).show());
                 }
             } catch (Exception e) {
-                Log.e("UploadError", "Error: " + e.getMessage());
-                runOnUiThread(() -> Toast.makeText(EditActivity.this, "서버 연결 실패", Toast.LENGTH_SHORT).show());
+                e.printStackTrace();
+                runOnUiThread(() -> Toast.makeText(this, "오류 발생", Toast.LENGTH_SHORT).show());
             }
         }).start();
     }
+
+
 
     // 기존 게시글을 삭제하는 메서드 (DELETE 요청)
     private void deleteOldPost(int postId) {
@@ -259,7 +296,7 @@ public class EditActivity extends AppCompatActivity {
         }).start();
     }
 
-    private byte[] downloadImage(String imageUrl) {
+private byte[] downloadImage(String imageUrl) {
         try {
             URL url = new URL(imageUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();

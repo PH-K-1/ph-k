@@ -73,6 +73,7 @@ public class MylistActivity extends AppCompatActivity {
         fetchItems();  // 서버에서 게시글 데이터를 가져옵니다.
     }
 
+
     private void fetchItems() {
         RequestQueue queue = Volley.newRequestQueue(this);
 

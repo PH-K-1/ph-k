@@ -118,7 +118,7 @@ public class RegisterActivity extends AppCompatActivity {
             TimePickerDialog timePickerDialog = new TimePickerDialog(this, (view1, hourOfDay1, minute1) -> {
                 // 선택된 날짜와 시간 결합
                 selectedDeadline = year1 + "-" + (month1 + 1) + "-" + dayOfMonth1 + " " + hourOfDay1 + ":" + minute1;
-                buttonSelectDeadline.setText(selectedDeadline);  // 버튼에 선택된 날짜와 시간 표시
+                buttonSelectDeadline.setText("경매 마감일:  " + selectedDeadline);  // 버튼에 데드라인 표시
             }, hourOfDay, minute, false);
             timePickerDialog.show();
         }, year, month, dayOfMonth);
