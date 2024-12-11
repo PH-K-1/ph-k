@@ -2,6 +2,7 @@ package com.example.ph_k;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +19,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -29,6 +34,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     private Context context;
     private List<Item> itemList;
     private String loggedInUserId;
+    private Handler handler = new Handler(); // 카운트다운 갱신용 Handler
+    private Runnable runnable;
 
     public ItemAdapter(Context context, List<Item> itemList, String loggedInUserId) {
         this.context = context;
@@ -51,12 +58,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         String formattedPrice = formatPrice(item.getPrice());
         holder.price.setText(formattedPrice + "원");
 
-        // 마감일 설정
+        // 카운트다운 설정
         String deadline = item.getDeadline();
         if ("없음".equals(deadline)) {
             holder.deadline.setText("종료: 없음");
         } else {
-            holder.deadline.setText("종료: " + deadline);
+            startCountdown(holder, deadline);
         }
 
         List<String> imageUrls = item.getImageUrls();
@@ -106,7 +113,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         }
     }
 
-
     @Override
     public int getItemCount() {
         return itemList.size();
@@ -135,6 +141,56 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         } catch (NumberFormatException e) {
             e.printStackTrace();
             return price;
+        }
+    }
+
+    private void startCountdown(ViewHolder holder, String deadline) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            Date deadlineDate = sdf.parse(deadline);
+            if (deadlineDate == null) {
+                holder.deadline.setText("종료: 없음");
+                return;
+            }
+
+            runnable = new Runnable() {
+                @Override
+                public void run() {
+                    long remainingTime = deadlineDate.getTime() - System.currentTimeMillis();
+                    if (remainingTime > 0) {
+                        String formattedTime = formatTime(remainingTime);
+                        holder.deadline.setText("종료까지: " + formattedTime);
+                        handler.postDelayed(this, 1000); // 1초마다 업데이트
+                    } else {
+                        holder.deadline.setText("종료됨");
+                        handler.removeCallbacks(this); // 타이머 종료
+                    }
+                }
+            };
+            handler.post(runnable);
+        } catch (Exception e) {
+            e.printStackTrace();
+            holder.deadline.setText("종료: 없음");
+        }
+    }
+
+    private String formatTime(long millis) {
+        long days = TimeUnit.MILLISECONDS.toDays(millis);
+        millis -= TimeUnit.DAYS.toMillis(days);
+        long hours = TimeUnit.MILLISECONDS.toHours(millis);
+        millis -= TimeUnit.HOURS.toMillis(hours);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+        millis -= TimeUnit.MINUTES.toMillis(minutes);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+
+        if (days > 0) {
+            return days + "일 " + hours + "시간 " + minutes + "분 " + seconds + "초";
+        } else if (hours > 0) {
+            return hours + "시간 " + minutes + "분 " + seconds + "초";
+        } else if (minutes > 0) {
+            return minutes + "분 " + seconds + "초";
+        } else {
+            return seconds + "초";
         }
     }
 
