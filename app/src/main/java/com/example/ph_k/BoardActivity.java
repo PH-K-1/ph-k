@@ -137,13 +137,16 @@ public class BoardActivity extends AppCompatActivity {
                                 images.add(imageUrls.getString(j));
                             }
 
+                            String deadline = item.getString("deadline");  // 데드라인 추가
+
                             itemList.add(new Item(
                                     item.getInt("id"),
                                     item.getString("title"),
                                     item.getString("description"),
                                     item.getString("price"),
                                     images,
-                                    item.getString("user_id")
+                                    item.getString("user_id"),
+                                    deadline  // 데드라인 전달
                             ));
                         }
                         filteredList.clear();
@@ -157,6 +160,7 @@ public class BoardActivity extends AppCompatActivity {
 
         queue.add(request);
     }
+
 
     private void filterItems(String query) {
         filteredList.clear();

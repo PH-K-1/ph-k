@@ -51,6 +51,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         String formattedPrice = formatPrice(item.getPrice());
         holder.price.setText(formattedPrice + "원");
 
+        // 마감일 설정
+        String deadline = item.getDeadline();
+        if ("없음".equals(deadline)) {
+            holder.deadline.setText("종료: 없음");
+        } else {
+            holder.deadline.setText("종료: " + deadline);
+        }
+
         List<String> imageUrls = item.getImageUrls();
         if (imageUrls != null && !imageUrls.isEmpty()) {
             String firstImageUrl = imageUrls.get(0);
@@ -98,13 +106,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         }
     }
 
+
     @Override
     public int getItemCount() {
         return itemList.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView title, price;
+        TextView title, price, deadline; // 마감일을 표시할 TextView 추가
         ImageView image;
         ImageButton menuButton;
 
@@ -112,6 +121,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             super(itemView);
             title = itemView.findViewById(R.id.itemTitle);
             price = itemView.findViewById(R.id.itemPrice);
+            deadline = itemView.findViewById(R.id.itemDeadline); // 마감일 TextView 연결
             image = itemView.findViewById(R.id.itemImage);
             menuButton = itemView.findViewById(R.id.menuButton);
         }

@@ -98,13 +98,16 @@ public class MylistActivity extends AppCompatActivity {
                                         images.add(imageUrls.getString(j)); // 이미지 URL 리스트에 추가
                                     }
 
+                                    String deadline = item.getString("deadline");  // 데드라인 추가
+
                                     Item newItem = new Item(
                                             item.getInt("id"),
                                             item.getString("title"),
                                             item.getString("description"),
                                             item.getString("price"),
                                             images, // 여러 이미지 URL을 리스트로 전달
-                                            itemUserId // user_id를 String으로 처리
+                                            itemUserId, // user_id를 String으로 처리
+                                            deadline // 데드라인을 아이템에 추가
                                     );
                                     itemList.add(newItem); // 새로운 아이템 추가
                                 }
@@ -126,4 +129,5 @@ public class MylistActivity extends AppCompatActivity {
 
         queue.add(request);  // 네트워크 요청 큐에 추가
     }
+
 }

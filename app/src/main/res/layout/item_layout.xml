@@ -54,6 +54,14 @@
             android:textColor="#FF5722"
             android:layout_marginTop="4dp" />
 
+        <TextView
+            android:id="@+id/itemDeadline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="경매 종료: "
+            android:textSize="14sp"
+            android:textColor="#FF0000" />
+
     </LinearLayout>
 
     <!-- 메뉴 버튼 -->
