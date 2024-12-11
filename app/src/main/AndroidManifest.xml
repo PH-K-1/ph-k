@@ -30,17 +30,18 @@
         <activity android:name=".MyPageActivity" android:exported="true" tools:ignore="WrongManifestParent" />
         <activity android:name=".SignupActivity" android:exported="true" tools:ignore="WrongManifestParent" />
         <activity android:name=".LoginActivity" android:exported="true" tools:ignore="WrongManifestParent" />
-        <activity android:name=".ChatActivity" android:exported="true" tools:ignore="WrongManifestParent" />
+        <activity android:name=".AuctionActivity" android:exported="true" tools:ignore="WrongManifestParent" />
         <activity android:name=".RegisterActivity" android:label="상품 등록" android:exported="true" tools:ignore="WrongManifestParent" />
         <activity android:name=".MylistActivity" android:label="" android:exported="true" tools:ignore="WrongManifestParent" />
-        <activity android:name=".PostDetailActivity" android:exported="true" tools:ignore="WrongManifestParent"/>
+        <activity android:name=".PostDetailActivity" android:exported="true" tools:ignore="WrongManifestParent" />
+
+        <!-- ChatRoomActivity 추가 -->
+        <activity android:name=".ChatRoomActivity" android:exported="true" tools:ignore="WrongManifestParent" />
 
         <!-- EditActivity 추가 -->
         <activity android:name=".EditActivity" android:exported="true" tools:ignore="WrongManifestParent" />
-
     </application>
 
     <!-- 인터넷 권한 추가 -->
     <uses-permission android:name="android.permission.INTERNET" />
-
 </manifest>

@@ -8,17 +8,27 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface ApiService {
+    // 로그인
     @POST("login")
     Call<LoginResponse> loginUser(@Body LoginRequest loginRequest);
 
+    // 회원가입
     @POST("signup")
     Call<SignupResponse> signupUser(@Body SignRequest signupRequest);
 
-    // 게시글 삭제 API 추가
-    @DELETE("posts/{itemId}")  // {itemId} 경로 파라미터로 게시글 ID를 받음
+    // 게시글 삭제
+    @DELETE("posts/{itemId}")
     Call<Void> deletePost(@Path("itemId") String itemId);
 
-    // 게시글 수정 API 추가
+    // 게시글 수정
     @PUT("posts/{itemId}")
-    Call<PostData> updatePost(@Path("itemId") int itemId, @Body PostData postData);  // 수정된 postData 전달
+    Call<PostData> updatePost(@Path("itemId") int itemId, @Body PostData postData);
+
+    // 채팅방 생성 API
+
+    @POST("chatroom/create")
+    Call<CreateChatRoomResponse> createChatRoom(@Body CreateChatRoomRequest request);
+
+
 }
+

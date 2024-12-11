@@ -30,7 +30,7 @@ public class BoardActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ItemAdapter adapter;
     private List<Item> itemList;
-    private static final String URL = "http://192.168.55.231:7310/get_items";
+    private static final String URL = BuildConfig.BASE_URL+"/get_items";
 
     // 로그인된 사용자 ID를 저장할 변수
     private String loggedInUserId;
