@@ -1,22 +1,20 @@
 package com.example.ph_k;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +26,7 @@ public class PostDetailActivity extends AppCompatActivity {
     private List<String> imageUrls = new ArrayList<>();
 
     private boolean isLiked = false;  // 좋아요 상태 (기본값은 false)
-    private int userId;  // 로그인한 사용자 ID
+    private String userId;  // 로그인한 사용자 ID
     private int itemId;  // 게시글 ID
     private String itemUserId;  // 게시글 작성자의 ID
 
@@ -48,11 +46,17 @@ public class PostDetailActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.viewPager);
         useridTextView = findViewById(R.id.useridTextView);
 
+        // SharedPreferences에서 로그인된 userId 가져오기
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        userId = sharedPreferences.getString("username", null); // "username" 키로 로그인된 사용자 ID 가져오기
+
+        // 로그인된 userId를 로그로 출력
+        Log.d("PostDetailActivity", "Logged in user ID: " + userId);
+
         // 뒤로가기 버튼 클릭 리스너 설정
         backButton.setOnClickListener(v -> finish());
 
-        // 공유하기 버튼 클릭 리스너 설정
-        shareButton.setOnClickListener(v -> sharePost());
+
 
         // 게시글 세부 정보 표시
         displayPostDetails();
@@ -77,13 +81,15 @@ public class PostDetailActivity extends AppCompatActivity {
         ArrayList<String> imageUrlList = intent.getStringArrayListExtra("image_urls");
 
         itemId = intent.getIntExtra("item_id", -1);  // 게시글의 itemId 받아오기
-        this.userId = intent.getIntExtra("user_id", -1);  // 로그인한 userId 받아오기
         boolean isLiked = intent.getBooleanExtra("isLiked", false);  // 좋아요 상태 전달받기
 
         titleTextView.setText(title);
         descriptionTextView.setText(description);
         priceTextView.setText(price);
         useridTextView.setText(itemUserId);
+
+        // 로그에 게시글 작성자 ID 출력
+        Log.d("PostDetailActivity", "Item User ID: " + itemUserId);
 
         if (imageUrlList != null) {
             imageUrls.addAll(imageUrlList);
@@ -94,23 +100,18 @@ public class PostDetailActivity extends AppCompatActivity {
 
         // 좋아요 상태에 맞게 아이콘 설정
         if (isLiked) {
-            favoriteButton.setImageResource(R.drawable.ic_favorite_24);
+            favoriteButton.setImageResource(R.drawable.ic_favorite_24);  // 좋아요 있음 아이콘
         } else {
-            favoriteButton.setImageResource(R.drawable.ic_nofavorite_24);
+            favoriteButton.setImageResource(R.drawable.ic_nofavorite_24);  // 좋아요 없음 아이콘
         }
-    }
 
-    // 공유하기 기능
-    private void sharePost() {
-        Intent intent = getIntent();
-        String title = intent.getStringExtra("title");
-
-        String sharedUrl = "https://example.com/post?title=" + title;
-
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "Check out this amazing post: " + sharedUrl);
-        startActivity(Intent.createChooser(shareIntent, "Share using"));
+        // 로그인된 사용자와 게시글 작성자가 일치하지 않으면 좋아요 버튼 비활성화
+        if (!itemUserId.equals(userId)) {
+            favoriteButton.setImageResource(R.drawable.ic_nofavorite_24);  // 좋아요 없음 아이콘
+            favoriteButton.setEnabled(false);  // 좋아요 버튼 비활성화
+        } else {
+            favoriteButton.setEnabled(true);  // 좋아요 버튼 활성화
+        }
     }
 
     // 좋아요 상태 확인 (서버로 요청하여 좋아요 상태 확인)
@@ -118,7 +119,7 @@ public class PostDetailActivity extends AppCompatActivity {
         String url = "http://192.168.55.231:7310/check_like_status";  // 좋아요 상태 확인을 위한 API URL
         JSONObject data = new JSONObject();
         try {
-            data.put("user_id", itemUserId);  // 로그인한 사용자 ID
+            data.put("user_id", itemUserId);  // 게시글 작성자 ID
             data.put("item_id", itemId);  // 게시글 ID
 
             // Volley의 RequestQueue 객체 생성
@@ -139,7 +140,14 @@ public class PostDetailActivity extends AppCompatActivity {
                                 isLiked = false;  // 좋아요 상태 갱신
                             }
 
-                            favoriteButton.setEnabled(true);  // 버튼 활성화
+                            // 로그인된 사용자와 게시글 작성자가 다르면 좋아요 버튼 비활성화
+                            if (!itemUserId.equals(userId)) {
+                                favoriteButton.setImageResource(R.drawable.ic_nofavorite_24);  // 좋아요 없음 아이콘
+                                favoriteButton.setEnabled(false);  // 좋아요 버튼 비활성화
+                            } else {
+                                favoriteButton.setEnabled(true);  // 좋아요 버튼 활성화
+                            }
+
                         } catch (Exception e) {
                             e.printStackTrace();
                             Toast.makeText(PostDetailActivity.this, "좋아요 상태 조회 실패", Toast.LENGTH_SHORT).show();
@@ -156,6 +164,8 @@ public class PostDetailActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+
 
     // 좋아요 상태 토글 (버튼 클릭 시)
     private void toggleLikeStatus() {
