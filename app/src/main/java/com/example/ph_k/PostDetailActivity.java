@@ -158,6 +158,7 @@ public class PostDetailActivity extends AppCompatActivity {
     }
 
     // 좋아요 상태 토글 (버튼 클릭 시)
+    // 좋아요 상태 토글 (버튼 클릭 시)
     private void toggleLikeStatus() {
         // 버튼을 클릭하자마자 비활성화
         favoriteButton.setEnabled(false);
@@ -189,8 +190,8 @@ public class PostDetailActivity extends AppCompatActivity {
                         String message = isLiked ? "좋아요 추가되었습니다." : "좋아요 취소되었습니다.";
                         Toast.makeText(PostDetailActivity.this, message, Toast.LENGTH_SHORT).show();
 
-                        // 서버 응답 후 버튼 활성화
-                        favoriteButton.setEnabled(true);
+                        // 좋아요 상태가 갱신된 후 현재 액티비티 종료
+                        finish();  // MylikeActivity를 갱신하려면 현재 액티비티를 종료
                     },
                     error -> {
                         // 서버 오류 처리
@@ -207,6 +208,7 @@ public class PostDetailActivity extends AppCompatActivity {
             favoriteButton.setEnabled(true);
         }
     }
+
 
     // Buy 버튼 클릭 시 채팅 화면으로 이동
     private void navigateToChat() {

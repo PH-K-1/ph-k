@@ -74,6 +74,11 @@ public class MylikeActivity extends AppCompatActivity {
         fetchItems();  // 서버에서 게시글 데이터를 가져옵니다.
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchItems();  // 갱신된 데이터를 가져와서 RecyclerView에 반영
+    }
 
     private void fetchItems() {
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -139,8 +144,4 @@ public class MylikeActivity extends AppCompatActivity {
 
         queue.add(request);  // 네트워크 요청 큐에 추가
     }
-
-
-
-
 }
