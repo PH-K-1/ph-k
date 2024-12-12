@@ -296,7 +296,7 @@ public class EditActivity extends AppCompatActivity {
         }).start();
     }
 
-private byte[] downloadImage(String imageUrl) {
+    private byte[] downloadImage(String imageUrl) {
         try {
             URL url = new URL(imageUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();

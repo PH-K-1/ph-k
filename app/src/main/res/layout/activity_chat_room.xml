@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:weightSum="1">
+
+    <!-- 채팅방 ID 표시 -->
+    <TextView
+        android:id="@+id/text_chat_room_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="채팅방 ID: "
+        android:textSize="18sp"
+        android:padding="8dp" />
+
+    <!-- 채팅 메시지 표시 영역 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="8dp">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/chat_message_area"> <!-- 여기에서 chat_message_area 정의 -->
+            <!-- 여기에 채팅 메시지가 동적으로 추가됨 -->
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- 경매 참여 버튼 -->
+    <Button
+        android:id="@+id/btn_participate_auction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="경매 참여"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- 채팅 메시지 입력 필드 -->
+    <EditText
+        android:id="@+id/edit_text_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="메시지를 입력하세요"
+        android:inputType="text"
+        android:padding="10dp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- 메시지 전송 버튼 -->
+    <Button
+        android:id="@+id/btn_send_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="전송"
+        android:layout_gravity="end"/>
+
+</LinearLayout>

@@ -37,7 +37,6 @@
         <activity android:name=".EditActivity" android:exported="true" tools:ignore="WrongManifestParent" />
         <activity android:name=".MylikeActivity" android:exported="true" tools:ignore="WrongManifestParent" />
 
-
     </application>
 
     <!-- 인터넷 권한 추가 -->
