@@ -15,5 +15,6 @@
     <color name="colorOnPrimary">#FFFFFF</color> <!-- 흰색 텍스트 -->
     <color name="colorBackground">#FFFFFF</color> <!-- 흰색 배경 -->
     <color name="colorOnBackground">#000000</color> <!-- 검은색 텍스트 -->
+    <color name="gray">#808080</color>
 
 </resources>

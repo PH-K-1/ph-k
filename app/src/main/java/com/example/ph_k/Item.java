@@ -9,15 +9,19 @@ public class Item {
     private String price;
     private List<String> imageUrls;  // 여러 이미지 URL을 저장할 List로 변경
     private String userId;
+    private String deadline;        // 마감일 추가
+    private boolean isLiked;        // 좋아요 상태 추가
 
     // 생성자
-    public Item(int id, String title, String description, String price, List<String> imageUrls, String userId) {
+    public Item(int id, String title, String description, String price, List<String> imageUrls, String userId, String deadline, boolean isLiked) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.price = price;
         this.imageUrls = imageUrls;  // 여러 이미지 URL 초기화
         this.userId = userId;
+        this.deadline = deadline;   // 마감일 초기화
+        this.isLiked = isLiked;     // 좋아요 상태 초기화
     }
 
     public int getId() {
@@ -42,5 +46,17 @@ public class Item {
 
     public String getUserId() {
         return userId;
+    }
+
+    public String getDeadline() {
+        return deadline;
+    }
+
+    public boolean isLiked() {
+        return isLiked;
+    }
+
+    public void setLiked(boolean liked) {
+        isLiked = liked;
     }
 }

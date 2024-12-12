@@ -1,29 +1,37 @@
 package com.example.ph_k;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -36,7 +44,9 @@ public class RegisterActivity extends AppCompatActivity {
     private static final int IMAGE_PICK_CODE = 1000;
     private ImageView imagePreview1, imagePreview2, imagePreview3, imagePreview4, imagePreview5;
 
-    private List<Uri> imageUris = new ArrayList<>();  // 선택된 이미지 URI들을 저장
+    private List<Uri> imageUris = new ArrayList<>();
+    private Button buttonSelectDeadline;
+    private String selectedDeadline;
 
     // 드로어 관련 변수들
     private DrawerLayout drawerLayout;
@@ -58,14 +68,14 @@ public class RegisterActivity extends AppCompatActivity {
         EditText editTitle = findViewById(R.id.edit_title);
         EditText editDescription = findViewById(R.id.edit_description);
         EditText editPrice = findViewById(R.id.edit_price);
-        ImageView buttonUploadImage = findViewById(R.id.button_upload_image); // ImageView로 변경
+        buttonSelectDeadline = findViewById(R.id.edit_deadline);
+        ImageView buttonUploadImage = findViewById(R.id.button_upload_image);
         Button buttonRegister = findViewById(R.id.button_register);
 
         // 드로어 설정
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navigationView);
         Toolbar toolbar = findViewById(R.id.toolbar);
-
         setSupportActionBar(toolbar);
 
         // ActionBarDrawerToggle 설정
@@ -77,7 +87,6 @@ public class RegisterActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        // ** 현재 Activity와 연결된 메뉴 항목 선택 **
         navigationView.setNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_register) {
@@ -87,12 +96,12 @@ public class RegisterActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             }
-            drawerLayout.closeDrawers(); // 드로어 닫기
+            drawerLayout.closeDrawers();
             return false;
         });
 
-        // 이미지 업로드 버튼 클릭 리스너
-        buttonUploadImage.setOnClickListener(v -> pickImage());
+        // 날짜와 시간 선택 버튼 클릭 리스너
+        buttonSelectDeadline.setOnClickListener(v -> showDateTimePicker());
 
         // 등록 버튼 클릭 리스너
         buttonRegister.setOnClickListener(v -> {
@@ -100,18 +109,51 @@ public class RegisterActivity extends AppCompatActivity {
             String description = editDescription.getText().toString();
             String price = editPrice.getText().toString();
 
-            if (imageUris == null || title.isEmpty() || description.isEmpty() || price.isEmpty()) {
-                Toast.makeText(this, "모든 항목을 입력하세요.", Toast.LENGTH_SHORT).show();
+            if (imageUris.isEmpty() || title.isEmpty() || description.isEmpty() || price.isEmpty() || selectedDeadline == null || selectedDeadline.isEmpty()) {
+                showCustomToast("모든 항목을 입력하세요.");
                 return;
             }
 
-            uploadData(title, description, price, imageUris);
+            uploadData(title, description, price, selectedDeadline, imageUris);
         });
+
+        // 이미지 업로드 버튼 클릭 리스너
+        buttonUploadImage.setOnClickListener(v -> pickImage());
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+    private void showDateTimePicker() {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, year1, month1, dayOfMonth1) -> {
+            TimePickerDialog timePickerDialog = new TimePickerDialog(this, (view1, hourOfDay1, minute1) -> {
+                selectedDeadline = year1 + "-" + (month1 + 1) + "-" + dayOfMonth1 + " " + hourOfDay1 + ":" + minute1;
+                buttonSelectDeadline.setText("경매 마감일:  " + selectedDeadline);
+            }, hourOfDay, minute, false);
+            timePickerDialog.show();
+        }, year, month, dayOfMonth);
+
+        datePickerDialog.show();
     }
 
     private void pickImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true); // 여러 이미지 선택 허용
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         startActivityForResult(intent, IMAGE_PICK_CODE);
     }
 
@@ -122,66 +164,57 @@ public class RegisterActivity extends AppCompatActivity {
             if (data.getClipData() != null) {
                 int count = data.getClipData().getItemCount();
                 if (count > 5) {
-                    Toast.makeText(this, "최대 5개의 이미지만 선택할 수 있습니다.", Toast.LENGTH_SHORT).show();
-                    count = 5; // 최대 5개까지만 처리
+                    showCustomToast("최대 5개의 이미지만 선택할 수 있습니다.");
+                    count = 5;
                 }
 
-                imageUris.clear();  // 기존 선택된 이미지들을 초기화
-
+                imageUris.clear();
                 for (int i = 0; i < count; i++) {
                     Uri imageUri = data.getClipData().getItemAt(i).getUri();
-                    imageUris.add(imageUri);  // 선택된 이미지들 추가
+                    imageUris.add(imageUri);
                 }
 
-                // 선택된 이미지를 각 ImageView에 설정
-                if (imageUris.size() > 0) {
-                    imagePreview1.setImageURI(imageUris.get(0)); // 첫 번째 이미지
-                }
-                if (imageUris.size() > 1) {
-                    imagePreview2.setImageURI(imageUris.get(1)); // 두 번째 이미지
-                }
-                if (imageUris.size() > 2) {
-                    imagePreview3.setImageURI(imageUris.get(2)); // 세 번째 이미지
-                }
-                if (imageUris.size() > 3) {
-                    imagePreview4.setImageURI(imageUris.get(3)); // 네 번째 이미지
-                }
-                if (imageUris.size() > 4) {
-                    imagePreview5.setImageURI(imageUris.get(4)); // 다섯 번째 이미지
-                }
+                // 이미지 미리보기 설정
+                if (imageUris.size() > 0) imagePreview1.setImageURI(imageUris.get(0));
+                if (imageUris.size() > 1) imagePreview2.setImageURI(imageUris.get(1));
+                if (imageUris.size() > 2) imagePreview3.setImageURI(imageUris.get(2));
+                if (imageUris.size() > 3) imagePreview4.setImageURI(imageUris.get(3));
+                if (imageUris.size() > 4) imagePreview5.setImageURI(imageUris.get(4));
             } else if (data.getData() != null) {
-                // 단일 이미지 선택 시 처리
                 imageUris.clear();
                 imageUris.add(data.getData());
-                imagePreview1.setImageURI(imageUris.get(0)); // 첫 번째 이미지만 미리보기로 설정
+                imagePreview1.setImageURI(imageUris.get(0));
             }
         }
     }
 
-    // 업로드 처리 메소드
-    private void uploadData(String title, String description, String price, List<Uri> imageUris) {
+    private void uploadData(String title, String description, String price, String deadline, List<Uri> imageUris) {
         new Thread(() -> {
             try {
-                OkHttpClient client = new OkHttpClient();
+                String cleanPrice = price.replaceAll("[,]", "");
+
+                OkHttpClient client = new OkHttpClient.Builder()
+                        .connectTimeout(30, TimeUnit.SECONDS)
+                        .writeTimeout(30, TimeUnit.SECONDS)
+                        .readTimeout(30, TimeUnit.SECONDS)
+                        .build();
 
                 MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
                 builder.addFormDataPart("title", title);
                 builder.addFormDataPart("description", description);
-                builder.addFormDataPart("price", price);
+                builder.addFormDataPart("price", cleanPrice);
+                builder.addFormDataPart("deadline", deadline);
 
-                // SharedPreferences에서 로그인된 사용자 정보 가져오기
                 SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-                String username = sharedPreferences.getString("username", null);  // 로그인된 사용자 이름 가져오기
+                String username = sharedPreferences.getString("username", null);
 
                 if (username == null) {
-                    // 로그인되지 않은 경우 처리 (예: 로그인 화면으로 이동)
-                    runOnUiThread(() -> Toast.makeText(this, "로그인된 사용자가 없습니다.", Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> showCustomToast("로그인된 사용자가 없습니다."));
                     return;
                 }
 
-                builder.addFormDataPart("user_id", username);  // USER_ID 추가
+                builder.addFormDataPart("user_id", username);
 
-                // 여러 이미지를 처리
                 for (int i = 0; i < imageUris.size(); i++) {
                     Uri imageUri = imageUris.get(i);
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
@@ -193,7 +226,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                 RequestBody requestBody = builder.build();
                 Request request = new Request.Builder()
-                        .url(BuildConfig.BASE_URL+"/upload")
+                        .url("http://192.168.200.114:7310/upload")
                         .post(requestBody)
                         .build();
 
@@ -201,13 +234,12 @@ public class RegisterActivity extends AppCompatActivity {
 
                 runOnUiThread(() -> {
                     if (response.isSuccessful()) {
-                        Toast.makeText(this, "등록 성공", Toast.LENGTH_SHORT).show();
-                        // 등록 성공 후 BoardActivity로 이동
+                        showCustomToast("등록 성공");
                         Intent intent = new Intent(RegisterActivity.this, BoardActivity.class);
-                        startActivity(intent); // BoardActivity로 이동
-                        finish(); // 현재 Activity 종료
+                        startActivity(intent);
+                        finish();
                     } else {
-                        Toast.makeText(this, "등록 실패", Toast.LENGTH_SHORT).show();
+                        showCustomToast("등록 실패");
                     }
                 });
             } catch (Exception e) {
@@ -216,4 +248,16 @@ public class RegisterActivity extends AppCompatActivity {
         }).start();
     }
 
+    public void showCustomToast(String message) {
+        LayoutInflater inflater = getLayoutInflater();
+        View customView = inflater.inflate(R.layout.custom_toast, null);
+
+        TextView toastMessage = customView.findViewById(R.id.toast_message);
+        toastMessage.setText(message);
+
+        Toast customToast = new Toast(getApplicationContext());
+        customToast.setDuration(Toast.LENGTH_SHORT);
+        customToast.setView(customView);
+        customToast.show();
+    }
 }

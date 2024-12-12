@@ -10,8 +10,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <!-- Toolbar for action bar -->
-        <!-- RecyclerView to display items -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -21,11 +21,23 @@
             android:titleTextColor="@color/black" />
 
 
+        <!-- SearchView for filtering items -->
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toolbar"
+            android:queryHint="검색어를 입력하세요"
+            android:iconifiedByDefault="false"
+            android:layout_margin="8dp"
+            android:background="@drawable/search_view_border" />
+
+        <!-- RecyclerView to display items -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_below="@id/toolbar"
+            android:layout_below="@id/searchView"
             android:layout_above="@id/bottomNavigationView" />
 
         <!-- Bottom navigation view -->

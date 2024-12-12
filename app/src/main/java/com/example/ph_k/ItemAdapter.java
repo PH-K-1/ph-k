@@ -2,7 +2,7 @@ package com.example.ph_k;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +18,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -29,6 +33,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     private Context context;
     private List<Item> itemList;
     private String loggedInUserId;
+    private Handler handler = new Handler(); // 카운트다운 갱신용 Handler
 
     public ItemAdapter(Context context, List<Item> itemList, String loggedInUserId) {
         this.context = context;
@@ -51,6 +56,15 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         String formattedPrice = formatPrice(item.getPrice());
         holder.price.setText(formattedPrice + "원");
 
+        // 사용자가 입력한 deadline 값 사용
+        String deadline = item.getDeadline();
+        if ("없음".equals(deadline)) {
+            holder.deadline.setText("종료: 없음");
+        } else {
+            // 카운트다운 시작
+            startCountdown(holder, deadline);
+        }
+
         List<String> imageUrls = item.getImageUrls();
         if (imageUrls != null && !imageUrls.isEmpty()) {
             String firstImageUrl = imageUrls.get(0);
@@ -71,8 +85,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             context.startActivity(intent);
         });
 
-        if (context instanceof BoardActivity) {
-            holder.menuButton.setVisibility(View.GONE);
+        // MylikeActivity와 BoardActivity에서 메뉴 버튼 숨기기
+        if (context instanceof MylikeActivity || context instanceof BoardActivity) {
+            holder.menuButton.setVisibility(View.GONE); // 메뉴 버튼 숨기기
         } else {
             if (!item.getUserId().equals(loggedInUserId)) {
                 holder.menuButton.setVisibility(View.GONE);
@@ -104,7 +119,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView title, price;
+        TextView title, price, deadline; // 마감일을 표시할 TextView 추가
         ImageView image;
         ImageButton menuButton;
 
@@ -112,6 +127,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             super(itemView);
             title = itemView.findViewById(R.id.itemTitle);
             price = itemView.findViewById(R.id.itemPrice);
+//            deadline = itemView.findViewById(R.id.itemDeadline); // 마감일 TextView 연결
             image = itemView.findViewById(R.id.itemImage);
             menuButton = itemView.findViewById(R.id.menuButton);
         }
@@ -128,6 +144,55 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         }
     }
 
+    private void startCountdown(ViewHolder holder, String deadline) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            Date deadlineDate = sdf.parse(deadline);
+            if (deadlineDate == null) {
+                holder.deadline.setText("종료: 없음");
+                return;
+            }
+
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    long remainingTime = deadlineDate.getTime() - System.currentTimeMillis();
+                    if (remainingTime > 0) {
+                        String formattedTime = formatTime(remainingTime);
+                        holder.deadline.setText("경매 종료: " + formattedTime);
+                        handler.postDelayed(this, 1000); // 1초마다 업데이트
+                    } else {
+                        holder.deadline.setText("종료됨");
+                        handler.removeCallbacks(this); // 타이머 종료
+                    }
+                }
+            }, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            holder.deadline.setText("종료: 없음");
+        }
+    }
+
+    private String formatTime(long millis) {
+        long days = TimeUnit.MILLISECONDS.toDays(millis);
+        millis -= TimeUnit.DAYS.toMillis(days);
+        long hours = TimeUnit.MILLISECONDS.toHours(millis);
+        millis -= TimeUnit.HOURS.toMillis(hours);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+        millis -= TimeUnit.MINUTES.toMillis(minutes);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+
+        if (days > 0) {
+            return days + "일 " + hours + "시간 " + minutes + "분 " + seconds + "초";
+        } else if (hours > 0) {
+            return hours + "시간 " + minutes + "분 " + seconds + "초";
+        } else if (minutes > 0) {
+            return minutes + "분 " + seconds + "초";
+        } else {
+            return seconds + "초";
+        }
+    }
+
     private void editItem(Item item) {
         Intent intent = new Intent(context, EditActivity.class);
         intent.putExtra("item_id", item.getId());
@@ -136,6 +201,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         intent.putExtra("price", item.getPrice());
         intent.putStringArrayListExtra("image_urls", new ArrayList<>(item.getImageUrls()));
         intent.putExtra("item_Userid", item.getUserId());
+        intent.putExtra("deadline", item.getDeadline()); // deadline 값 추가
         context.startActivity(intent);
     }
 
@@ -145,18 +211,18 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             public void onDeleteSuccess() {
                 itemList.remove(position);
                 notifyItemRemoved(position);
-                Toast.makeText(context, "게시글이 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                showCustomToast("게시글이 삭제되었습니다.");
             }
 
             @Override
             public void onDeleteFailure() {
-                Toast.makeText(context, "게시글 삭제에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                showCustomToast("게시글 삭제에 실패했습니다.");
             }
         });
     }
 
     private void deleteItemFromServer(String itemId, OnDeleteItemListener listener) {
-        ApiService apiService = RetrofitClient.getRetrofitInstance().create(ApiService.class);
+        ApiService apiService = RetrofitClient.getApiService(); // RetrofitClient에서 ApiService 인스턴스를 가져옴
         Call<Void> call = apiService.deletePost(itemId);
         call.enqueue(new Callback<Void>() {
             @Override
@@ -178,5 +244,19 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public interface OnDeleteItemListener {
         void onDeleteSuccess();
         void onDeleteFailure();
+    }
+
+    // 커스텀 Toast 메서드
+    public void showCustomToast(String message) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View customView = inflater.inflate(R.layout.custom_toast, null);
+
+        TextView toastMessage = customView.findViewById(R.id.toast_message);
+        toastMessage.setText(message);
+
+        Toast customToast = new Toast(context);
+        customToast.setDuration(Toast.LENGTH_SHORT);
+        customToast.setView(customView);
+        customToast.show();
     }
 }
