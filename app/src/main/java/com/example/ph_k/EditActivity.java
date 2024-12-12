@@ -9,8 +9,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Button;
 import android.app.DatePickerDialog;
@@ -204,7 +207,7 @@ public class EditActivity extends AppCompatActivity {
         String updatedUserId = sharedPreferences.getString("username", "");
 
         if (updatedTitle.isEmpty() || updatedDescription.isEmpty()  || selectedDeadline == null || selectedDeadline.isEmpty()) {
-            Toast.makeText(this, "모든 항목을 입력하세요.", Toast.LENGTH_SHORT).show();
+            showCustomToast("모든 항목을 입력하세요.");
             return;
         }
 
@@ -250,22 +253,22 @@ public class EditActivity extends AppCompatActivity {
 
                 RequestBody requestBody = builder.build();
                 Request request = new Request.Builder()
-                        .url("http://192.168.55.231:7310/upload")
+                        .url("http://192.168.200.114:7310/upload")
                         .post(requestBody)
                         .build();
 
                 Response response = client.newCall(request).execute();
                 if (response.isSuccessful()) {
                     runOnUiThread(() -> {
-                        Toast.makeText(this, "게시글이 수정되었습니다.", Toast.LENGTH_SHORT).show();
+                        showCustomToast("게시글이 수정되었습니다.");
                         finish();
                     });
                 } else {
-                    runOnUiThread(() -> Toast.makeText(this, "게시글 수정 실패", Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> showCustomToast("게시글 수정 실패"));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                runOnUiThread(() -> Toast.makeText(this, "오류 발생", Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> showCustomToast("오류 발생"));
             }
         }).start();
     }
@@ -279,7 +282,7 @@ public class EditActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
 
                 // 게시글 삭제 요청을 위한 URL
-                String url = "http://192.168.55.231:7310/posts/" + postId;
+                String url = "http://192.168.200.114:7310/posts/" + postId;
                 Request request = new Request.Builder()
                         .url(url)
                         .delete()  // DELETE 요청 보내기
@@ -314,5 +317,21 @@ public class EditActivity extends AppCompatActivity {
             Log.e("DownloadError", "Error downloading image: " + e.getMessage());
             return null;
         }
+    }
+    // 커스텀 Toast 메서드
+    public void showCustomToast(String message) {
+        // 레이아웃 인플레이터를 사용하여 커스텀 레이아웃을 인플레이트
+        LayoutInflater inflater = getLayoutInflater();
+        View customView = inflater.inflate(R.layout.custom_toast, null);
+
+        // 커스텀 레이아웃의 TextView를 찾아 메시지 설정
+        TextView toastMessage = customView.findViewById(R.id.toast_message);
+        toastMessage.setText(message);
+
+        // Toast 객체 생성 및 표시
+        Toast customToast = new Toast(getApplicationContext());
+        customToast.setDuration(Toast.LENGTH_SHORT);  // Toast 표시 시간 설정
+        customToast.setView(customView);
+        customToast.show();
     }
 }

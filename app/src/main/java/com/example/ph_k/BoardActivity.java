@@ -31,7 +31,7 @@ public class BoardActivity extends AppCompatActivity {
     private ItemAdapter adapter;
     private List<Item> itemList;
     private List<Item> filteredList; // 검색된 아이템을 저장
-    private static final String URL = "http://192.168.55.231:7310/get_items";
+    private static final String URL = "http://192.168.200.114:7310/get_items";
 
     private String loggedInUserId;
 

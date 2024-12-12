@@ -4,11 +4,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         String password = passwordEditText.getText().toString();
 
         if (username.isEmpty() || password.isEmpty()) {
-            Toast.makeText(LoginActivity.this, "아이디와 비밀번호를 입력하세요.", Toast.LENGTH_SHORT).show();
+            showCustomToast("아이디와 비밀번호를 입력하세요.");
             return;
         }
 
@@ -51,15 +55,25 @@ public class LoginActivity extends AppCompatActivity {
                     editor.putString("username", username);  // 사용자 이름 저장
                     editor.apply();
 
-                    Toast.makeText(LoginActivity.this, "로그인 성공", Toast.LENGTH_SHORT).show();
+                    showCustomToast("로그인 성공");
 
                     // 메인 화면으로 이동
                     Intent intent = new Intent(LoginActivity.this, BoardActivity.class);
                     startActivity(intent);
                     finish(); // 로그인 후 현재 액티비티 종료
                 } else {
-                    // 로그인 실패 시 메시지 처리
-                    Toast.makeText(LoginActivity.this, "로그인 실패: " + response.message(), Toast.LENGTH_SHORT).show();
+                    try {
+                        // 로그인 실패 시 서버에서 반환한 메시지 가져오기
+                        String errorMessage = response.errorBody().string(); // 실패 메시지
+                        JSONObject jsonObject = new JSONObject(errorMessage);
+                        String message = jsonObject.getString("message");
+
+                        // 메시지를 토스트로 표시
+                        showCustomToast(message);
+                    } catch (Exception e) {
+                        // 에러 처리
+                        showCustomToast("로그인 실패: " + e.getMessage());
+                    }
                 }
             }
 
@@ -67,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onFailure(Call<LoginResponse> call, Throwable t) {
                 // 네트워크 실패 처리
                 Log.e("LoginActivity", "Error: " + t.getMessage());
-                Toast.makeText(LoginActivity.this, "서버 연결 실패", Toast.LENGTH_SHORT).show();
+                showCustomToast("서버 연결 실패");
             }
         });
     }
@@ -77,5 +91,22 @@ public class LoginActivity extends AppCompatActivity {
         // 회원가입 화면으로 전환
         Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
         startActivity(intent);
+    }
+
+    // 커스텀 Toast 메서드
+    public void showCustomToast(String message) {
+        // 레이아웃 인플레이터를 사용하여 커스텀 레이아웃을 인플레이트
+        LayoutInflater inflater = getLayoutInflater();
+        View customView = inflater.inflate(R.layout.custom_toast, null);
+
+        // 커스텀 레이아웃의 TextView를 찾아 메시지 설정
+        TextView toastMessage = customView.findViewById(R.id.toast_message);
+        toastMessage.setText(message);
+
+        // Toast 객체 생성 및 표시
+        Toast customToast = new Toast(getApplicationContext());
+        customToast.setDuration(Toast.LENGTH_SHORT);  // Toast 표시 시간 설정
+        customToast.setView(customView);
+        customToast.show();
     }
 }

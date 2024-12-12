@@ -12,9 +12,12 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -81,7 +84,7 @@ public class RegisterActivity extends AppCompatActivity {
             String price = editPrice.getText().toString();
 
             if (imageUris.isEmpty() || title.isEmpty() || description.isEmpty() || price.isEmpty() || selectedDeadline == null || selectedDeadline.isEmpty()) {
-                Toast.makeText(this, "모든 항목을 입력하세요.", Toast.LENGTH_SHORT).show();
+                showCustomToast("모든 항목을 입력하세요.");
                 return;
             }
 
@@ -139,7 +142,7 @@ public class RegisterActivity extends AppCompatActivity {
             if (data.getClipData() != null) {
                 int count = data.getClipData().getItemCount();
                 if (count > 5) {
-                    Toast.makeText(this, "최대 5개의 이미지만 선택할 수 있습니다.", Toast.LENGTH_SHORT).show();
+                    showCustomToast("최대 5개의 이미지만 선택할 수 있습니다.");
                     count = 5;
                 }
 
@@ -185,7 +188,7 @@ public class RegisterActivity extends AppCompatActivity {
                 String username = sharedPreferences.getString("username", null);
 
                 if (username == null) {
-                    runOnUiThread(() -> Toast.makeText(this, "로그인된 사용자가 없습니다.", Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() ->  showCustomToast("로그인된 사용자가 없습니다."));
                     return;
                 }
 
@@ -202,7 +205,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                 RequestBody requestBody = builder.build();
                 Request request = new Request.Builder()
-                        .url("http://192.168.55.231:7310/upload")
+                        .url("http://192.168.200.114:7310/upload")
                         .post(requestBody)
                         .build();
 
@@ -210,17 +213,34 @@ public class RegisterActivity extends AppCompatActivity {
 
                 runOnUiThread(() -> {
                     if (response.isSuccessful()) {
-                        Toast.makeText(this, "등록 성공", Toast.LENGTH_SHORT).show();
+                        showCustomToast("등록 성공");
                         Intent intent = new Intent(RegisterActivity.this, BoardActivity.class);
                         startActivity(intent);
                         finish();
                     } else {
-                        Toast.makeText(this, "등록 실패", Toast.LENGTH_SHORT).show();
+                        showCustomToast("등록 실패");
                     }
                 });
             } catch (Exception e) {
                 Log.e("UploadError", "Error: " + e.getMessage());
             }
         }).start();
+    }
+
+    // 커스텀 Toast 메서드
+    public void showCustomToast(String message) {
+        // 레이아웃 인플레이터를 사용하여 커스텀 레이아웃을 인플레이트
+        LayoutInflater inflater = getLayoutInflater();
+        View customView = inflater.inflate(R.layout.custom_toast, null);
+
+        // 커스텀 레이아웃의 TextView를 찾아 메시지 설정
+        TextView toastMessage = customView.findViewById(R.id.toast_message);
+        toastMessage.setText(message);
+
+        // Toast 객체 생성 및 표시
+        Toast customToast = new Toast(getApplicationContext());
+        customToast.setDuration(Toast.LENGTH_SHORT);  // Toast 표시 시간 설정
+        customToast.setView(customView);
+        customToast.show();
     }
 }

@@ -30,7 +30,7 @@ public class MylikeActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ItemAdapter adapter;
     private List<Item> itemList;
-    private static final String URL = "http://192.168.55.231:7310/get_items";
+    private static final String URL = "http://192.168.200.114:7310/get_items";
 
     // 로그인된 user_id 저장할 변수
     private String loggedInUserId;

@@ -35,7 +35,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     private List<Item> itemList;
     private String loggedInUserId;
     private Handler handler = new Handler(); // 카운트다운 갱신용 Handler
-    private Runnable runnable;
 
     public ItemAdapter(Context context, List<Item> itemList, String loggedInUserId) {
         this.context = context;
@@ -75,6 +74,15 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                     .error(R.drawable.mypage)
                     .into(holder.image);
         }
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ChatRoomActivity.class);
+            intent.putExtra("item_id", item.getId());
+            intent.putExtra("title", item.getTitle());
+            intent.putExtra("description", item.getDescription());
+            intent.putExtra("price", formattedPrice + "원");
+            intent.putStringArrayListExtra("image_urls", new ArrayList<>(imageUrls));
+            context.startActivity(intent);
+        });
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, PostDetailActivity.class);
@@ -115,7 +123,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             }
         }
     }
-
 
     @Override
     public int getItemCount() {
@@ -215,12 +222,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             public void onDeleteSuccess() {
                 itemList.remove(position);
                 notifyItemRemoved(position);
-                Toast.makeText(context, "게시글이 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                showCustomToast("게시글이 삭제되었습니다.");
             }
 
             @Override
             public void onDeleteFailure() {
-                Toast.makeText(context, "게시글 삭제에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                showCustomToast("게시글 삭제에 실패했습니다.");
             }
         });
     }
@@ -248,5 +255,19 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public interface OnDeleteItemListener {
         void onDeleteSuccess();
         void onDeleteFailure();
+    }
+
+    // 커스텀 Toast 메서드
+    public void showCustomToast(String message) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View customView = inflater.inflate(R.layout.custom_toast, null);
+
+        TextView toastMessage = customView.findViewById(R.id.toast_message);
+        toastMessage.setText(message);
+
+        Toast customToast = new Toast(context);
+        customToast.setDuration(Toast.LENGTH_SHORT);
+        customToast.setView(customView);
+        customToast.show();
     }
 }

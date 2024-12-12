@@ -3,6 +3,8 @@ package com.example.ph_k;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -39,6 +41,7 @@ public class MyPageActivity extends AppCompatActivity {
         } else {
             usernameTextView.setText("로그인 후 이용 가능합니다.");
         }
+        Log.d("SharedPreferences", "Username saved: " + username);
 
         // 네비게이션과 하단 네비게이션 설정
         drawerLayout = findViewById(R.id.drawerLayout);
@@ -100,7 +103,7 @@ public class MyPageActivity extends AppCompatActivity {
                 // 로그인 상태 확인
                 if (username == null) {
                     // 로그인되지 않은 경우, Toast 메시지 표시
-                    Toast.makeText(MyPageActivity.this, "로그인 후 이용 가능합니다.", Toast.LENGTH_SHORT).show();
+                    showCustomToast("로그인 후 이용 가능합니다.");
                 } else {
                     // 로그인된 경우, 내가 쓴 게시글 화면으로 이동
                     Intent intent = new Intent(MyPageActivity.this, MylistActivity.class);
@@ -117,7 +120,7 @@ public class MyPageActivity extends AppCompatActivity {
                 // 로그인 상태 확인
                 if (username == null) {
                     // 로그인되지 않은 경우, Toast 메시지 표시
-                    Toast.makeText(MyPageActivity.this, "로그인 후 이용 가능합니다.", Toast.LENGTH_SHORT).show();
+                    showCustomToast("로그인 후 이용 가능합니다.");
                 } else {
                     // 로그인된 경우, 내가 찜한 게시글 화면으로 이동
                     Intent intent = new Intent(MyPageActivity.this, MylikeActivity.class);
@@ -178,5 +181,22 @@ public class MyPageActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    // 커스텀 Toast 메서드
+    public void showCustomToast(String message) {
+        // 레이아웃 인플레이터를 사용하여 커스텀 레이아웃을 인플레이트
+        LayoutInflater inflater = getLayoutInflater();
+        View customView = inflater.inflate(R.layout.custom_toast, null);
+
+        // 커스텀 레이아웃의 TextView를 찾아 메시지 설정
+        TextView toastMessage = customView.findViewById(R.id.toast_message);
+        toastMessage.setText(message);
+
+        // Toast 객체 생성 및 표시
+        Toast customToast = new Toast(getApplicationContext());
+        customToast.setDuration(Toast.LENGTH_SHORT);  // Toast 표시 시간 설정
+        customToast.setView(customView);
+        customToast.show();
     }
 }

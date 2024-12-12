@@ -1,7 +1,10 @@
 package com.example.ph_k;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,14 +31,18 @@ public class PostDetailActivity extends AppCompatActivity {
     private List<String> imageUrls = new ArrayList<>();
 
     private boolean isLiked = false;  // 좋아요 상태 (기본값은 false)
-    private int userId;  // 로그인한 사용자 ID
     private int itemId;  // 게시글 ID
     private String itemUserId;  // 게시글 작성자의 ID
+    private String loggedInUserId;  // 로그인한 사용자 ID
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
+
+        // SharedPreferences에서 로그인된 user_id 가져오기
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        loggedInUserId = sharedPreferences.getString("username", null); // "username" 키로 로그인된 사용자 ID 가져오기
 
         // UI 요소들 초기화
         titleTextView = findViewById(R.id.titleTextView);
@@ -77,8 +84,6 @@ public class PostDetailActivity extends AppCompatActivity {
         ArrayList<String> imageUrlList = intent.getStringArrayListExtra("image_urls");
 
         itemId = intent.getIntExtra("item_id", -1);  // 게시글의 itemId 받아오기
-        this.userId = intent.getIntExtra("user_id", -1);  // 로그인한 userId 받아오기
-        boolean isLiked = intent.getBooleanExtra("isLiked", false);  // 좋아요 상태 전달받기
 
         titleTextView.setText(title);
         descriptionTextView.setText(description);
@@ -115,10 +120,10 @@ public class PostDetailActivity extends AppCompatActivity {
 
     // 좋아요 상태 확인 (서버로 요청하여 좋아요 상태 확인)
     private void checkLikeStatus() {
-        String url = "http://192.168.55.231:7310/check_like_status";  // 좋아요 상태 확인을 위한 API URL
+        String url = "http://192.168.200.114:7310/check_like_status";  // 좋아요 상태 확인을 위한 API URL
         JSONObject data = new JSONObject();
         try {
-            data.put("user_id", itemUserId);  // 로그인한 사용자 ID
+            data.put("user_id", loggedInUserId);  // 로그인한 사용자 ID
             data.put("item_id", itemId);  // 게시글 ID
 
             // Volley의 RequestQueue 객체 생성
@@ -142,12 +147,12 @@ public class PostDetailActivity extends AppCompatActivity {
                             favoriteButton.setEnabled(true);  // 버튼 활성화
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Toast.makeText(PostDetailActivity.this, "좋아요 상태 조회 실패", Toast.LENGTH_SHORT).show();
+                            showCustomToast("좋아요 상태 조회 실패");
                         }
                     },
                     error -> {
                         // 에러 처리
-                        Toast.makeText(PostDetailActivity.this, "서버 통신 실패", Toast.LENGTH_SHORT).show();
+                        showCustomToast("서버 통신 실패");
                     }
             );
 
@@ -163,7 +168,7 @@ public class PostDetailActivity extends AppCompatActivity {
         favoriteButton.setEnabled(false);
 
         // 좋아요 상태에 따라 URL 설정
-        String url = isLiked ? "http://192.168.55.231:7310/unlike" : "http://192.168.55.231:7310/like";
+        String url = isLiked ? "http://192.168.200.114:7310/unlike" : "http://192.168.200.114:7310/like";
 
         // 좋아요 상태 변경
         isLiked = !isLiked;  // 좋아요 상태 토글
@@ -178,7 +183,7 @@ public class PostDetailActivity extends AppCompatActivity {
         // 서버에 좋아요 상태 전송
         JSONObject data = new JSONObject();
         try {
-            data.put("user_id", itemUserId);  // 로그인한 사용자 ID
+            data.put("user_id", loggedInUserId);  // 로그인한 사용자 ID
             data.put("item_id", itemId);  // 게시글 ID
 
             // Volley를 사용한 요청
@@ -187,14 +192,14 @@ public class PostDetailActivity extends AppCompatActivity {
                     response -> {
                         // 서버 응답 처리
                         String message = isLiked ? "좋아요 추가되었습니다." : "좋아요 취소되었습니다.";
-                        Toast.makeText(PostDetailActivity.this, message, Toast.LENGTH_SHORT).show();
+                        showCustomToast( message);
 
                         // 서버 응답 후 버튼 활성화
                         favoriteButton.setEnabled(true);
                     },
                     error -> {
                         // 서버 오류 처리
-                        Toast.makeText(PostDetailActivity.this, "좋아요 처리 실패", Toast.LENGTH_SHORT).show();
+                        showCustomToast("좋아요 처리 실패");
 
                         // 실패 시에도 버튼 활성화
                         favoriteButton.setEnabled(true);
@@ -210,10 +215,27 @@ public class PostDetailActivity extends AppCompatActivity {
 
     // Buy 버튼 클릭 시 채팅 화면으로 이동
     private void navigateToChat() {
-        Intent chatIntent = new Intent(PostDetailActivity.this, ChatActivity.class);
+        Intent chatIntent = new Intent(PostDetailActivity.this, ChatRoomActivity.class);
         chatIntent.putExtra("postTitle", getIntent().getStringExtra("title"));
         chatIntent.putExtra("postPrice", getIntent().getStringExtra("price"));
         chatIntent.putExtra("postUserId", itemUserId);  // 게시글 작성자의 ID
         startActivity(chatIntent);
+    }
+
+    // 커스텀 Toast 메서드
+    public void showCustomToast(String message) {
+        // 레이아웃 인플레이터를 사용하여 커스텀 레이아웃을 인플레이트
+        LayoutInflater inflater = getLayoutInflater();
+        View customView = inflater.inflate(R.layout.custom_toast, null);
+
+        // 커스텀 레이아웃의 TextView를 찾아 메시지 설정
+        TextView toastMessage = customView.findViewById(R.id.toast_message);
+        toastMessage.setText(message);
+
+        // Toast 객체 생성 및 표시
+        Toast customToast = new Toast(getApplicationContext());
+        customToast.setDuration(Toast.LENGTH_SHORT);  // Toast 표시 시간 설정
+        customToast.setView(customView);
+        customToast.show();
     }
 }
