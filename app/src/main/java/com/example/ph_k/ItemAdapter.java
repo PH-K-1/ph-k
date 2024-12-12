@@ -35,6 +35,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     private List<Item> itemList;
     private String loggedInUserId;
     private Handler handler = new Handler(); // 카운트다운 갱신용 Handler
+    private Runnable runnable;
 
     public ItemAdapter(Context context, List<Item> itemList, String loggedInUserId) {
         this.context = context;
@@ -74,15 +75,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                     .error(R.drawable.mypage)
                     .into(holder.image);
         }
-        holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, ChatRoomActivity.class);
-            intent.putExtra("item_id", item.getId());
-            intent.putExtra("title", item.getTitle());
-            intent.putExtra("description", item.getDescription());
-            intent.putExtra("price", formattedPrice + "원");
-            intent.putStringArrayListExtra("image_urls", new ArrayList<>(imageUrls));
-            context.startActivity(intent);
-        });
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, PostDetailActivity.class);
@@ -95,15 +87,17 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             context.startActivity(intent);
         });
 
-        // MylikeActivity와 BoardActivity에서 메뉴 버튼 숨기기
+        // 메뉴 버튼 투명 처리 및 비활성화 로직
         if (context instanceof MylikeActivity || context instanceof BoardActivity) {
-            holder.menuButton.setVisibility(View.GONE); // 메뉴 버튼 숨기기
+            holder.menuButton.setAlpha(0f); // 투명 처리
+            holder.menuButton.setEnabled(false); // 클릭 비활성화
         } else {
-            // 다른 화면에서는 기존 로직대로 메뉴 버튼 처리
             if (!item.getUserId().equals(loggedInUserId)) {
-                holder.menuButton.setVisibility(View.GONE);
+                holder.menuButton.setAlpha(0f); // 투명 처리
+                holder.menuButton.setEnabled(false); // 클릭 비활성화
             } else {
-                holder.menuButton.setVisibility(View.VISIBLE);
+                holder.menuButton.setAlpha(1f); // 보이도록 설정
+                holder.menuButton.setEnabled(true); // 클릭 활성화
                 holder.menuButton.setOnClickListener(v -> {
                     PopupMenu popupMenu = new PopupMenu(context, holder.menuButton);
                     popupMenu.inflate(R.menu.item_menu);
@@ -123,6 +117,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             }
         }
     }
+
+
 
     @Override
     public int getItemCount() {
@@ -222,12 +218,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             public void onDeleteSuccess() {
                 itemList.remove(position);
                 notifyItemRemoved(position);
-                showCustomToast("게시글이 삭제되었습니다.");
+                Toast.makeText(context, "게시글이 삭제되었습니다.", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onDeleteFailure() {
-                showCustomToast("게시글 삭제에 실패했습니다.");
+                Toast.makeText(context, "게시글 삭제에 실패했습니다.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -255,19 +251,5 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public interface OnDeleteItemListener {
         void onDeleteSuccess();
         void onDeleteFailure();
-    }
-
-    // 커스텀 Toast 메서드
-    public void showCustomToast(String message) {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View customView = inflater.inflate(R.layout.custom_toast, null);
-
-        TextView toastMessage = customView.findViewById(R.id.toast_message);
-        toastMessage.setText(message);
-
-        Toast customToast = new Toast(context);
-        customToast.setDuration(Toast.LENGTH_SHORT);
-        customToast.setView(customView);
-        customToast.show();
     }
 }

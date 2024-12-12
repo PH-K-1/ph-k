@@ -24,10 +24,5 @@ public interface ApiService {
     // 게시글 수정 API 추가
     @PUT("posts/{itemId}")
     Call<PostData> updatePost(@Path("itemId") int itemId, @Body PostData postData);  // 수정된 postData 전달
-    // 채팅방 생성 API
-
-    @POST("chatroom/create")
-    Call<CreateChatRoomResponse> createChatRoom(@Body CreateChatRoomRequest request);
-
 
 }
