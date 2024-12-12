@@ -34,9 +34,9 @@
         <activity android:name=".RegisterActivity" android:label="상품 등록" android:exported="true" tools:ignore="WrongManifestParent" />
         <activity android:name=".MylistActivity" android:label="" android:exported="true" tools:ignore="WrongManifestParent" />
         <activity android:name=".PostDetailActivity" android:exported="true" tools:ignore="WrongManifestParent"/>
-
-        <!-- EditActivity 추가 -->
         <activity android:name=".EditActivity" android:exported="true" tools:ignore="WrongManifestParent" />
+        <activity android:name=".MylikeActivity" android:exported="true" tools:ignore="WrongManifestParent" />
+
 
     </application>
 

@@ -87,9 +87,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             context.startActivity(intent);
         });
 
-        if (context instanceof BoardActivity) {
-            holder.menuButton.setVisibility(View.GONE);
+        // MylikeActivity와 BoardActivity에서 메뉴 버튼 숨기기
+        if (context instanceof MylikeActivity || context instanceof BoardActivity) {
+            holder.menuButton.setVisibility(View.GONE); // 메뉴 버튼 숨기기
         } else {
+            // 다른 화면에서는 기존 로직대로 메뉴 버튼 처리
             if (!item.getUserId().equals(loggedInUserId)) {
                 holder.menuButton.setVisibility(View.GONE);
             } else {
@@ -175,7 +177,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         }
     }
 
-
     private String formatTime(long millis) {
         long days = TimeUnit.MILLISECONDS.toDays(millis);
         millis -= TimeUnit.DAYS.toMillis(days);
@@ -208,7 +209,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         context.startActivity(intent);
     }
 
-
     private void deleteItem(Item item, int position) {
         deleteItemFromServer(String.valueOf(item.getId()), new OnDeleteItemListener() {
             @Override
@@ -226,7 +226,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     }
 
     private void deleteItemFromServer(String itemId, OnDeleteItemListener listener) {
-        ApiService apiService = RetrofitClient.getRetrofitInstance().create(ApiService.class);
+        ApiService apiService = RetrofitClient.getApiService(); // RetrofitClient에서 ApiService 인스턴스를 가져옴
         Call<Void> call = apiService.deletePost(itemId);
         call.enqueue(new Callback<Void>() {
             @Override

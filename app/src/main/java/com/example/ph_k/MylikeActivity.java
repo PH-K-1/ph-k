@@ -26,7 +26,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MylistActivity extends AppCompatActivity {
+public class MylikeActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ItemAdapter adapter;
     private List<Item> itemList;
@@ -38,7 +38,7 @@ public class MylistActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_list);
+        setContentView(R.layout.activity_my_like);
 
         // SharedPreferences에서 로그인된 user_id 가져오기
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
@@ -47,6 +47,7 @@ public class MylistActivity extends AppCompatActivity {
         // Toolbar 설정 (상단 뒤로가기 버튼 포함)
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("");
 
         // 뒤로가기 버튼 활성화
         ImageView backButton = findViewById(R.id.backButton);
@@ -89,16 +90,17 @@ public class MylistActivity extends AppCompatActivity {
                             JSONArray items = response.getJSONArray("items");
                             itemList.clear();  // 데이터 갱신 시 기존 아이템을 제거
 
-                            // 서버에서 받은 게시글 목록을 로그인한 사용자와 비교하여 필터링
+                            // 서버에서 받은 게시글 목록을 로그인한 사용자가 좋아요를 눌렀는지 확인
                             for (int i = 0; i < items.length(); i++) {
                                 JSONObject item = items.getJSONObject(i);
-                                String itemUserId = item.getString("user_id"); // 게시글의 user_id
 
-                                // 좋아요 상태를 확인
+                                // 좋아요 상태 확인
                                 boolean isLiked = item.getBoolean("isLiked");
 
-                                // 로그인된 사용자만 필터링하여 아이템 리스트에 추가
-                                if (itemUserId.equals(loggedInUserId)) {
+                                // 좋아요를 누른 게시글만 필터링
+                                if (isLiked) {
+                                    String itemUserId = item.getString("user_id"); // 게시글의 user_id
+
                                     JSONArray imageUrls = item.getJSONArray("image_urls");
                                     List<String> images = new ArrayList<>();
                                     for (int j = 0; j < imageUrls.length(); j++) {
@@ -124,19 +126,21 @@ public class MylistActivity extends AppCompatActivity {
                             // 아이템 목록이 갱신되었음을 RecyclerView에 알림
                             adapter.notifyDataSetChanged();
                         } catch (JSONException e) {
-                            Log.e("MylistActivity", "JSON Parsing error: " + e.getMessage());
+                            Log.e("MylikeActivity", "JSON Parsing error: " + e.getMessage());
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("MylistActivity", "Volley error: " + error.getMessage());
+                        Log.e("MylikeActivity", "Volley error: " + error.getMessage());
                     }
                 });
 
         queue.add(request);  // 네트워크 요청 큐에 추가
     }
+
+
 
 
 }

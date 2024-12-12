@@ -109,6 +109,23 @@ public class MyPageActivity extends AppCompatActivity {
             }
         });
 
+        // 내가 찜한 게시글 버튼 클릭 리스너
+        Button likedPostsButton = findViewById(R.id.btn_liked_posts);
+        likedPostsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 로그인 상태 확인
+                if (username == null) {
+                    // 로그인되지 않은 경우, Toast 메시지 표시
+                    Toast.makeText(MyPageActivity.this, "로그인 후 이용 가능합니다.", Toast.LENGTH_SHORT).show();
+                } else {
+                    // 로그인된 경우, 내가 찜한 게시글 화면으로 이동
+                    Intent intent = new Intent(MyPageActivity.this, MylikeActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+
         // 네비게이션 아이템 선택 리스너
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override

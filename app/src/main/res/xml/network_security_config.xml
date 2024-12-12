@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">192.168.200.114</domain>  <!-- 실제 서버 IP로 변경 -->
+        <domain includeSubdomains="true">192.168.55.231</domain>  <!-- 실제 서버 IP로 변경 -->
     </domain-config>
 </network-security-config>

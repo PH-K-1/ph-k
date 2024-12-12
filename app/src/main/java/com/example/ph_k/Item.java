@@ -11,8 +11,10 @@ public class Item {
     private String userId;
     private String deadline;
 
+    private boolean isLiked;
+
     // 생성자
-    public Item(int id, String title, String description, String price, List<String> imageUrls, String userId, String deadline) {
+    public Item(int id, String title, String description, String price, List<String> imageUrls, String userId, String deadline, boolean isLiked) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -20,6 +22,7 @@ public class Item {
         this.imageUrls = imageUrls;  // 여러 이미지 URL 초기화
         this.userId = userId;
         this.deadline = deadline;
+        this.isLiked = isLiked;
     }
 
     public int getId() {
@@ -47,6 +50,14 @@ public class Item {
     }
     public String getDeadline() {
         return deadline;
+    }
+
+    public boolean isLiked() {
+        return isLiked;
+    }
+
+    public void setLiked(boolean liked) {
+        isLiked = liked;
     }
 
 }

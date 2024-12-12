@@ -31,7 +31,7 @@ public class BoardActivity extends AppCompatActivity {
     private ItemAdapter adapter;
     private List<Item> itemList;
     private List<Item> filteredList; // 검색된 아이템을 저장
-    private static final String URL = "http://192.168.200.114:7310/get_items";
+    private static final String URL = "http://192.168.55.231:7310/get_items";
 
     private String loggedInUserId;
 
@@ -135,14 +135,18 @@ public class BoardActivity extends AppCompatActivity {
                         for (int i = 0; i < items.length(); i++) {
                             JSONObject item = items.getJSONObject(i);
 
+                            // 이미지 URLs 리스트 추가
                             JSONArray imageUrls = item.getJSONArray("image_urls");
                             List<String> images = new ArrayList<>();
                             for (int j = 0; j < imageUrls.length(); j++) {
                                 images.add(imageUrls.getString(j));
                             }
 
-                            String deadline = item.getString("deadline");  // 데드라인 추가
+                            // 데드라인과 좋아요 상태 추가
+                            String deadline = item.getString("deadline");
+                            boolean isLiked = item.getBoolean("isLiked");
 
+                            // 아이템 리스트에 추가
                             itemList.add(new Item(
                                     item.getInt("id"),
                                     item.getString("title"),
@@ -150,7 +154,8 @@ public class BoardActivity extends AppCompatActivity {
                                     item.getString("price"),
                                     images,
                                     item.getString("user_id"),
-                                    deadline  // 데드라인 전달
+                                    deadline,
+                                    isLiked
                             ));
                         }
                         filteredList.clear();
@@ -164,7 +169,6 @@ public class BoardActivity extends AppCompatActivity {
 
         queue.add(request);
     }
-
 
     private void filterItems(String query) {
         filteredList.clear();
