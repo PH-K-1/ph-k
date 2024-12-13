@@ -1,26 +1,34 @@
 package com.example.ph_k;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
-import android.widget.TextView;
-import android.widget.EditText;
+import android.text.InputType;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.LinearLayout;  // LinearLayout import 추가
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import io.socket.client.IO;
-import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+
 public class ChatRoomActivity extends AppCompatActivity {
 
-    private TextView textChatRoomId;
+    private TextView textChatRoomId, textHighestBid;
     private EditText editTextMessage;
     private Button buttonSendMessage;
     private Button buttonParticipateAuction;
@@ -36,12 +44,24 @@ public class ChatRoomActivity extends AppCompatActivity {
             String message = data.optString("message");
             String username = data.optString("username");
 
-            // 메시지 화면에 표시
             runOnUiThread(() -> {
-                // 메시지를 동적으로 추가
                 TextView newMessage = new TextView(ChatRoomActivity.this);
                 newMessage.setText(username + ": " + message);
                 ((LinearLayout) findViewById(R.id.chat_message_area)).addView(newMessage);
+            });
+        }
+    };
+
+    // 입찰 갱신 리스너
+    private Emitter.Listener onBidUpdate = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            JSONObject data = (JSONObject) args[0];
+            int highestBid = data.optInt("highest_bid");
+            String highestBidder = data.optString("highest_bidder");
+
+            runOnUiThread(() -> {
+                textHighestBid.setText("최고 입찰가: " + highestBid + "원 (" + highestBidder + ")");
             });
         }
     };
@@ -52,42 +72,44 @@ public class ChatRoomActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat_room);
 
         textChatRoomId = findViewById(R.id.text_chat_room_id);
+        textHighestBid = findViewById(R.id.text_highest_bid); // 최고 입찰가 텍스트 뷰
         editTextMessage = findViewById(R.id.edit_text_message);
         buttonSendMessage = findViewById(R.id.btn_send_message);
         buttonParticipateAuction = findViewById(R.id.btn_participate_auction);
 
-        // 채팅방 ID를 받아옵니다
-        chatRoomId = getIntent().getStringExtra("chatRoomId");
-        if (chatRoomId != null) {
-            // 채팅방 ID를 화면에 표시
-            textChatRoomId.setText("채팅방 ID: " + chatRoomId);
-        } else {
-            textChatRoomId.setText("채팅방 ID를 가져올 수 없습니다.");
+        String auctionId = getIntent().getStringExtra("auctionId");
+        if (auctionId == null || auctionId.isEmpty()) {
+            Toast.makeText(this, "경매 ID를 가져올 수 없습니다.", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        // Socket.IO 클라이언트 설정
+        textChatRoomId.setText("경매 ID: " + auctionId);
+
+        chatRoomId = getIntent().getStringExtra("chatRoomId");
+        if (chatRoomId != null) {
+            textChatRoomId.setText("채팅방 ID: " + chatRoomId);
+        } else {
+            createOrGetChatRoom(auctionId);
+        }
+
         try {
-            mSocket = IO.socket("http://192.168.200.114:7310"); // 서버 주소를 입력하세요
+            mSocket = IO.socket(BuildConfig.BASE_URL);
             mSocket.connect();
 
             // 채팅방에 참여
             JSONObject joinData = new JSONObject();
-            try {
-                joinData.put("room", chatRoomId);
-                joinData.put("username", "user1");  // 예시로 "user1"으로 설정, 실제로는 로그인된 사용자 정보로 설정
-                mSocket.emit("join", joinData);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            joinData.put("room", chatRoomId);
+            joinData.put("username", "user1");
+            mSocket.emit("join", joinData);
 
-            // 메시지 수신
+            // 리스너 등록
             mSocket.on("message", onNewMessage);
+            mSocket.on("update_bid", onBidUpdate);
 
-        } catch (URISyntaxException e) {
+        } catch (URISyntaxException | JSONException e) {
             e.printStackTrace();
         }
 
-        // 메시지 전송 버튼 클릭 시
         buttonSendMessage.setOnClickListener(v -> {
             String message = editTextMessage.getText().toString().trim();
             if (!message.isEmpty()) {
@@ -95,24 +117,57 @@ public class ChatRoomActivity extends AppCompatActivity {
             }
         });
 
-        // 경매 참여 버튼 클릭 시
         buttonParticipateAuction.setOnClickListener(v -> {
-            // 경매 참여 관련 로직 구현
-            Toast.makeText(ChatRoomActivity.this, "경매에 참여하였습니다.", Toast.LENGTH_SHORT).show();
+            if (chatRoomId == null || chatRoomId.isEmpty()) {
+                Toast.makeText(this, "채팅방 ID를 가져오는 중입니다. 잠시만 기다려주세요.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "이미 채팅방에 참여 중입니다.", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
-    // 메시지 서버로 전송
+    private void createOrGetChatRoom(String auctionId) {
+        try {
+            JSONObject requestData = new JSONObject();
+            requestData.put("auction_id", auctionId);
+
+            String url = BuildConfig.BASE_URL + "/create_or_get_chat_room";
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                    com.android.volley.Request.Method.POST, url, requestData,
+                    response -> {
+                        try {
+                            chatRoomId = response.getString("chat_room_id");
+                            textChatRoomId.setText("채팅방 ID: " + chatRoomId);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(ChatRoomActivity.this, "채팅방 생성 실패", Toast.LENGTH_SHORT).show();
+                        }
+                    },
+                    error -> {
+                        error.printStackTrace();
+                        Toast.makeText(ChatRoomActivity.this, "채팅방 생성 요청 실패", Toast.LENGTH_SHORT).show();
+                    }
+            );
+
+            RequestQueue queue = Volley.newRequestQueue(this);
+            queue.add(jsonObjectRequest);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "요청 처리 중 오류 발생", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void sendMessage(String message) {
         try {
             JSONObject data = new JSONObject();
             data.put("room", chatRoomId);
-            data.put("username", "user1");  // 예시로 "user1"으로 설정, 실제로는 로그인된 사용자 정보로 설정
+            data.put("username", "user1");
             data.put("message", message);
 
             mSocket.emit("message", data);
 
-            // 전송된 메시지는 화면에 즉시 추가
             TextView newMessage = new TextView(this);
             newMessage.setText("나: " + message);
             ((LinearLayout) findViewById(R.id.chat_message_area)).addView(newMessage);
@@ -125,10 +180,11 @@ public class ChatRoomActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // 채팅방 나가기
         if (mSocket != null) {
+            mSocket.emit("leave", new JSONObject());
             mSocket.disconnect();
             mSocket.off("message", onNewMessage);
+            mSocket.off("update_bid", onBidUpdate);
         }
     }
 }

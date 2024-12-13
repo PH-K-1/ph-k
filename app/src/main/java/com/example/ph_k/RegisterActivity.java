@@ -205,7 +205,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                 RequestBody requestBody = builder.build();
                 Request request = new Request.Builder()
-                        .url("http://192.168.200.114:7310/upload")
+                        .url(BuildConfig.BASE_URL+"/upload")
                         .post(requestBody)
                         .build();
 

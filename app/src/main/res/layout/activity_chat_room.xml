@@ -15,6 +15,16 @@
         android:textSize="18sp"
         android:padding="8dp" />
 
+    <!-- 최고 입찰가 표시 -->
+    <TextView
+        android:id="@+id/text_highest_bid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="최고 입찰가: 0원 (없음)"
+        android:textSize="16sp"
+        android:padding="8dp"
+        android:layout_marginBottom="8dp" />
+
     <!-- 채팅 메시지 표시 영역 -->
     <ScrollView
         android:layout_width="match_parent"
@@ -25,7 +35,7 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/chat_message_area"> <!-- 여기에서 chat_message_area 정의 -->
+            android:id="@+id/chat_message_area">
             <!-- 여기에 채팅 메시지가 동적으로 추가됨 -->
         </LinearLayout>
     </ScrollView>

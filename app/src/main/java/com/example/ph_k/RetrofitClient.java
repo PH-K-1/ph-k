@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
     private static Retrofit retrofit;
-    private static final String BASE_URL = "http://192.168.200.114:7310/";  // 실제 서버 URL로 변경
+    private static final String BASE_URL = BuildConfig.BASE_URL;  // 실제 서버 URL로 변경
 
     // Retrofit 인스턴스를 반환하는 메서드
     public static Retrofit getRetrofitInstance() {

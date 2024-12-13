@@ -120,7 +120,7 @@ public class PostDetailActivity extends AppCompatActivity {
 
     // 좋아요 상태 확인 (서버로 요청하여 좋아요 상태 확인)
     private void checkLikeStatus() {
-        String url = "http://192.168.200.114:7310/check_like_status";  // 좋아요 상태 확인을 위한 API URL
+        String url = BuildConfig.BASE_URL+"/check_like_status";  // 좋아요 상태 확인을 위한 API URL
         JSONObject data = new JSONObject();
         try {
             data.put("user_id", loggedInUserId);  // 로그인한 사용자 ID
@@ -168,7 +168,7 @@ public class PostDetailActivity extends AppCompatActivity {
         favoriteButton.setEnabled(false);
 
         // 좋아요 상태에 따라 URL 설정
-        String url = isLiked ? "http://192.168.200.114:7310/unlike" : "http://192.168.200.114:7310/like";
+        String url = isLiked ? BuildConfig.BASE_URL+"/unlike" : BuildConfig.BASE_URL+"/like";
 
         // 좋아요 상태 변경
         isLiked = !isLiked;  // 좋아요 상태 토글
@@ -214,13 +214,13 @@ public class PostDetailActivity extends AppCompatActivity {
     }
 
     // Buy 버튼 클릭 시 채팅 화면으로 이동
+    // Buy 버튼 클릭 시 채팅 화면으로 이동
     private void navigateToChat() {
         Intent chatIntent = new Intent(PostDetailActivity.this, ChatRoomActivity.class);
-        chatIntent.putExtra("postTitle", getIntent().getStringExtra("title"));
-        chatIntent.putExtra("postPrice", getIntent().getStringExtra("price"));
-        chatIntent.putExtra("postUserId", itemUserId);  // 게시글 작성자의 ID
+        chatIntent.putExtra("auctionId", String.valueOf(itemId)); // itemId를 auctionId로 전달
         startActivity(chatIntent);
     }
+
 
     // 커스텀 Toast 메서드
     public void showCustomToast(String message) {
