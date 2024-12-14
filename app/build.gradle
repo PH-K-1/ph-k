@@ -14,7 +14,7 @@ android {
         versionName "1.0"
 
         // BASE_URL 설정
-        buildConfigField "String", "BASE_URL", '"http://192.168.31.18:7310"'
+        buildConfigField "String", "BASE_URL", '"http://203.250.133.110:7310"'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -55,6 +55,8 @@ dependencies {
 
     // Socket.IO 클라이언트
     implementation 'io.socket:socket.io-client:2.0.0'
+    implementation 'io.socket:socket.io-client:2.0.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
 
     // 테스트 라이브러리
     testImplementation libs.junit

@@ -7,8 +7,8 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
-        android:label="PH-K"
+        android:icon="@mipmap/sap"
+        android:label="SAP"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Phk"
@@ -19,7 +19,6 @@
         <activity
             android:name=".BoardActivity"
             android:exported="true"
-            android:label="상품 목록"
             tools:ignore="WrongManifestParent">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

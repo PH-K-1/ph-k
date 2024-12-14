@@ -30,6 +30,10 @@ public class MyPageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_page);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("내 정보");  // 상단바에 '내 정보' 제목 설정
+
         // 사용자 정보 불러오기
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         String username = sharedPreferences.getString("username", null);
@@ -47,7 +51,6 @@ public class MyPageActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawerLayout);
         NavigationView navigationView = findViewById(R.id.navigationView);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        Toolbar toolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
 
@@ -153,8 +156,17 @@ public class MyPageActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
                 if (itemId == R.id.nav_register) {
-                    Intent intent = new Intent(MyPageActivity.this, RegisterActivity.class);
-                    startActivity(intent);
+                    // 로그인 상태 확인 (이미 선언된 sharedPreferences 사용)
+                    String loggedInUserId = sharedPreferences.getString("username", null);
+
+                    if (loggedInUserId == null) {
+                        // 로그인되지 않은 상태이면 로그인 화면으로 이동
+                        Intent intent = new Intent(MyPageActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                    } else {
+                        // 로그인된 상태라면 등록 화면으로 이동
+                        startActivity(new Intent(MyPageActivity.this, RegisterActivity.class));
+                    }
                     return true;
                 } else if (itemId == R.id.nav_border) {
                     Intent intent = new Intent(MyPageActivity.this, BoardActivity.class);
