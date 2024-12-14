@@ -30,6 +30,10 @@ public class MyPageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_page);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("내 정보");  // 상단바에 '내 정보' 제목 설정
+
         // 사용자 정보 불러오기
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         String username = sharedPreferences.getString("username", null);
@@ -47,7 +51,6 @@ public class MyPageActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawerLayout);
         NavigationView navigationView = findViewById(R.id.navigationView);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        Toolbar toolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
 

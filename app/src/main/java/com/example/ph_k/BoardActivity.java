@@ -57,7 +57,13 @@ public class BoardActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         Toolbar toolbar = findViewById(R.id.toolbar);
 
+        // Toolbar 설정
         setSupportActionBar(toolbar);
+
+        // 상단바에 타이틀 설정
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("상품 목록");
+        }
 
         // ActionBarDrawerToggle 설정
         toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
