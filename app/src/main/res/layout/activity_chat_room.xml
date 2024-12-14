@@ -25,6 +25,16 @@
         android:padding="8dp"
         android:layout_marginBottom="8dp" />
 
+    <!-- 현재 가격 표시 -->
+    <TextView
+        android:id="@+id/pricetextview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="현재 가격: 0원"
+        android:textSize="16sp"
+        android:padding="8dp"
+        android:layout_marginBottom="8dp" />
+
     <!-- 채팅 메시지 표시 영역 -->
     <ScrollView
         android:layout_width="match_parent"
@@ -39,14 +49,6 @@
             <!-- 여기에 채팅 메시지가 동적으로 추가됨 -->
         </LinearLayout>
     </ScrollView>
-
-    <!-- 경매 참여 버튼 -->
-    <Button
-        android:id="@+id/btn_participate_auction"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="경매 참여"
-        android:layout_marginBottom="8dp"/>
 
     <!-- 채팅 메시지 입력 필드 -->
     <EditText

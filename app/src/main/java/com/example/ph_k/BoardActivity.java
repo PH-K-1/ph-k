@@ -83,17 +83,27 @@ public class BoardActivity extends AppCompatActivity {
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_register) {
-                startActivity(new Intent(BoardActivity.this, RegisterActivity.class));
+                // 로그인 상태 확인 (이미 선언된 sharedPreferences 사용)
+                String loggedInUserId = sharedPreferences.getString("username", null);
+
+                if (loggedInUserId == null) {
+                    // 로그인되지 않은 상태이면 로그인 화면으로 이동
+                    Intent intent = new Intent(BoardActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                } else {
+                    // 로그인된 상태라면 등록 화면으로 이동
+                    startActivity(new Intent(BoardActivity.this, RegisterActivity.class));
+                }
                 return true;
             } else if (itemId == R.id.nav_border) {
                 return true;
-            }
-            else if (itemId == R.id.nav_mypage) {
+            } else if (itemId == R.id.nav_mypage) {
                 startActivity(new Intent(BoardActivity.this, MyPageActivity.class));
                 return true;
             }
             return false;
         });
+
 
         // RecyclerView 설정
         recyclerView = findViewById(R.id.recyclerView);

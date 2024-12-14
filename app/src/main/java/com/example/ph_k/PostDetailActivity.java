@@ -214,12 +214,14 @@ public class PostDetailActivity extends AppCompatActivity {
     }
 
     // Buy 버튼 클릭 시 채팅 화면으로 이동
-    // Buy 버튼 클릭 시 채팅 화면으로 이동
     private void navigateToChat() {
         Intent chatIntent = new Intent(PostDetailActivity.this, ChatRoomActivity.class);
-        chatIntent.putExtra("auctionId", String.valueOf(itemId)); // itemId를 auctionId로 전달
+        chatIntent.putExtra("auctionId", String.valueOf(itemId));  // itemId를 auctionId로 전달
+        chatIntent.putExtra("price", priceTextView.getText().toString());  // 가격 정보를 전달
         startActivity(chatIntent);
     }
+
+
 
 
     // 커스텀 Toast 메서드
