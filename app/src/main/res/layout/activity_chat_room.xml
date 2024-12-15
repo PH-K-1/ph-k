@@ -36,10 +36,10 @@
             android:id="@+id/text_highest_bid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="최고 입찰가: 0원 (없음)"
+            android:text="최고가: 0원 (없음)"
             android:textSize="16sp"
-            android:textColor="@color/secondary_text"
-            android:fontFamily="sans-serif"
+            android:textColor="@color/primary_text"
+            android:fontFamily="sans-serif-medium"
             android:background="@drawable/bordered_background"
             android:padding="8dp"
             android:layout_marginBottom="8dp" />
@@ -49,10 +49,10 @@
             android:id="@+id/pricetextview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="현재 가격: 0원"
+            android:text="시작가: 0원"
             android:textSize="16sp"
-            android:textColor="@color/secondary_text1"
-            android:fontFamily="sans-serif"
+            android:textColor="@color/primary_text"
+            android:fontFamily="sans-serif-medium"
             android:background="@drawable/bordered_background"
             android:padding="8dp" />
     </LinearLayout>

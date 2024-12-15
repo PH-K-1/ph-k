@@ -57,7 +57,7 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         // 채팅방 ID와 가격 표시
         textChatRoomId.setText("경매 ID: " + auctionId);
-        textCurrentPrice.setText("현재 금액: " + price);
+        textCurrentPrice.setText("시작가: " + price);
 
         // 사용자 이름 가져오기
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
@@ -102,7 +102,7 @@ public class ChatRoomActivity extends AppCompatActivity {
                         String highestBidder = jsonResponse.optString("highest_bidder", "없음");
 
                         String formattedHighestBid = String.format("%,d", highestBid);
-                        textHighestBid.setText("최고 입찰가: " + formattedHighestBid + "원 (" + highestBidder + ")");
+                        textHighestBid.setText("최고가: " + formattedHighestBid + "원 (" + highestBidder + ")");
 
                         // 채팅 메시지 로드
                         JSONArray messages = jsonResponse.getJSONArray("messages");
@@ -210,7 +210,7 @@ public class ChatRoomActivity extends AppCompatActivity {
             String highestBidder = data.getString("highest_bidder");
 
             // 최고 입찰가 UI 업데이트
-            textHighestBid.setText("최고 입찰가: " + highestBid + "원 (" + highestBidder + ")");
+            textHighestBid.setText("최고가: " + highestBid + "원 (" + highestBidder + ")");
         } catch (JSONException e) {
             e.printStackTrace();
         }

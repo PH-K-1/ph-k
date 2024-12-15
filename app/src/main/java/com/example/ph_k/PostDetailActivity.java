@@ -20,11 +20,19 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+// 게시글 세부 정보 표시
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 public class PostDetailActivity extends AppCompatActivity {
-    private TextView titleTextView, descriptionTextView, priceTextView, useridTextView;
+    private TextView titleTextView, descriptionTextView, priceTextView, useridTextView, deadlineTextView;
     private ImageView backButton, shareButton, favoriteButton;
     private Button buyButton;
     private ViewPager2 viewPager;
@@ -54,6 +62,7 @@ public class PostDetailActivity extends AppCompatActivity {
         buyButton = findViewById(R.id.buyButton);
         viewPager = findViewById(R.id.viewPager);
         useridTextView = findViewById(R.id.useridTextView);
+        deadlineTextView = findViewById(R.id.deadlineTextView);  // 데드라인 TextView 추가
 
         // 뒤로가기 버튼 클릭 리스너 설정
         backButton.setOnClickListener(v -> finish());
@@ -64,7 +73,7 @@ public class PostDetailActivity extends AppCompatActivity {
         // 게시글 세부 정보 표시
         displayPostDetails();
 
-        // 좋아요 버튼 상태 확인
+        // 좋아요 상태 확인
         checkLikeStatus();
 
         // 좋아요 버튼 클릭 리스너 설정
@@ -74,6 +83,7 @@ public class PostDetailActivity extends AppCompatActivity {
         buyButton.setOnClickListener(v -> navigateToChat());
     }
 
+
     // 게시글 세부 정보 표시
     private void displayPostDetails() {
         Intent intent = getIntent();
@@ -82,6 +92,7 @@ public class PostDetailActivity extends AppCompatActivity {
         String price = intent.getStringExtra("price");
         itemUserId = intent.getStringExtra("item_Userid");  // 게시글 작성자의 ID
         ArrayList<String> imageUrlList = intent.getStringArrayListExtra("image_urls");
+        String deadline = intent.getStringExtra("deadline");  // 데드라인 값을 Intent로부터 받아옴
 
         itemId = intent.getIntExtra("item_id", -1);  // 게시글의 itemId 받아오기
 
@@ -89,6 +100,29 @@ public class PostDetailActivity extends AppCompatActivity {
         descriptionTextView.setText(description);
         priceTextView.setText(price);
         useridTextView.setText(itemUserId);
+
+        // 데드라인 값 표시
+        if (deadline != null) {
+            deadlineTextView.setText("경매 종료: " + deadline);
+
+            // 경매 종료 날짜 처리
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  // 날짜 형식 맞추기
+            try {
+                Date deadlineDate = dateFormat.parse(deadline);
+                Date currentDate = new Date();  // 현재 날짜
+
+                // 경매 종료 시간이 지나면 Buy 버튼 비활성화
+                if (deadlineDate != null && currentDate.after(deadlineDate)) {
+                    buyButton.setEnabled(false);
+                    buyButton.setText("경매 종료");  // 버튼 텍스트 변경
+
+                    // 경매 종료 메시지 표시
+                    showCustomToast("경매가 종료되었습니다.");
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
 
         if (imageUrlList != null) {
             imageUrls.addAll(imageUrlList);
@@ -105,6 +139,8 @@ public class PostDetailActivity extends AppCompatActivity {
         }
     }
 
+
+
     // 공유하기 기능
     private void sharePost() {
         Intent intent = getIntent();
@@ -117,7 +153,6 @@ public class PostDetailActivity extends AppCompatActivity {
         shareIntent.putExtra(Intent.EXTRA_TEXT, "Check out this amazing post: " + sharedUrl);
         startActivity(Intent.createChooser(shareIntent, "Share using"));
     }
-
     // 좋아요 상태 확인 (서버로 요청하여 좋아요 상태 확인)
     private void checkLikeStatus() {
         String url = BuildConfig.BASE_URL+"/check_like_status";  // 좋아요 상태 확인을 위한 API URL
@@ -221,18 +256,19 @@ public class PostDetailActivity extends AppCompatActivity {
         startActivity(chatIntent);
     }
 
-
-
-
+    // 커스텀 Toast 메서드
     // 커스텀 Toast 메서드
     public void showCustomToast(String message) {
         // 레이아웃 인플레이터를 사용하여 커스텀 레이아웃을 인플레이트
         LayoutInflater inflater = getLayoutInflater();
         View customView = inflater.inflate(R.layout.custom_toast, null);
 
-        // 커스텀 레이아웃의 TextView를 찾아 메시지 설정
+        // 커스텀 레이아웃의 TextView와 ImageView를 찾아 메시지와 로고 설정
         TextView toastMessage = customView.findViewById(R.id.toast_message);
         toastMessage.setText(message);
+
+        ImageView logo = customView.findViewById(R.id.toast_logo);
+        logo.setImageResource(R.mipmap.sap);
 
         // Toast 객체 생성 및 표시
         Toast customToast = new Toast(getApplicationContext());
@@ -240,4 +276,5 @@ public class PostDetailActivity extends AppCompatActivity {
         customToast.setView(customView);
         customToast.show();
     }
+
 }

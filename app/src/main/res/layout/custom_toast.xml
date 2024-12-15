@@ -4,14 +4,26 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="10dp"
-    android:background="#66000000"
-    android:gravity="center">
+    android:background="@drawable/rounded_border"
+    android:gravity="center"
+    android:minHeight="30dp">
 
-    <TextView
-        android:id="@+id/toast_message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp"
-        android:gravity="center_vertical" />
-</LinearLayout>
+    <!-- 로고 이미지 추가 -->
+<ImageView
+android:id="@+id/toast_logo"
+android:src="@mipmap/sap"
+android:layout_width="24dp"
+android:layout_height="24dp"
+android:layout_marginEnd="5dp"
+android:contentDescription="Logo" />
+
+    <!-- 메시지 텍스트 -->
+<TextView
+android:id="@+id/toast_message"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:textColor="#FFFFFF"
+android:textSize="14sp"
+android:gravity="center_vertical"
+android:maxHeight="30dp" />
+    </LinearLayout>
