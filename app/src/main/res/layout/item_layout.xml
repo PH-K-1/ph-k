@@ -58,49 +58,20 @@
             android:id="@+id/itemDeadline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="경매 종료: "
+            android:text="종료: "
             android:textSize="14sp"
             android:textColor="#FF0000" />
     </LinearLayout>
 
-    <!-- 버튼들을 수직으로 배치하는 LinearLayout 추가 -->
-    <LinearLayout
+    <!-- 메뉴 버튼 -->
+    <ImageButton
+        android:id="@+id/menuButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_vertical">
+        android:layout_marginBottom="10dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="More Options"
+        android:padding="8dp"
+        android:src="@drawable/ic_dehaze" />
 
-        <!-- 메뉴 버튼 -->
-        <ImageButton
-            android:id="@+id/menuButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_dehaze"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="More Options"
-            android:padding="8dp"
-            android:layout_marginBottom="10dp"/>
-
-        <!-- 좋아요 버튼 (하트 아이콘) -->
-        <ImageButton
-            android:id="@+id/likeButton"
-            android:layout_width="match_parent"
-            android:layout_height="24dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="0dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Like"
-            android:padding="8dp"
-            android:src="@drawable/ic_nofavorite_24" />
-
-    </LinearLayout>
-    <!-- 좋아요 수 표시 -->
-    <TextView
-        android:id="@+id/likeCount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
-        android:text="0"
-        android:textSize="14sp"
-        android:textColor="#000000" />
 </LinearLayout>

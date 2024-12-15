@@ -36,8 +36,8 @@ public class ChatRoomActivity extends AppCompatActivity {
 
 
 
-    private static final String URL_CHAT_MESSAGES = "http://203.250.133.92:7310/get_chat_messages";
-    private static final String SOCKET_URL = "http://203.250.133.92:7310";
+    private static final String URL_CHAT_MESSAGES = "http://203.250.133.110:7310/get_chat_messages";
+    private static final String SOCKET_URL = "http://203.250.133.110:7310";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

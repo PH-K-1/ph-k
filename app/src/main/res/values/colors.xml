@@ -16,5 +16,11 @@
     <color name="colorBackground">#FFFFFF</color> <!-- 흰색 배경 -->
     <color name="colorOnBackground">#000000</color> <!-- 검은색 텍스트 -->
     <color name="gray">#CCCCCC</color> <!-- 회색 추가 -->
+    <color name="background_color1">#F5F5F5</color>
+    <color name="primary_text1">#333333</color>
+    <color name="secondary_text1">#666666</color>
+    <color name="button_color">#007BFF</color>
+    <color name="light_background">#EDEDED</color>
+
 
 </resources>

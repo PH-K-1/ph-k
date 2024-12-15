@@ -4,68 +4,109 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:weightSum="1">
+    android:background="@color/background_color">
 
-    <!-- 채팅방 ID 표시 -->
-    <TextView
-        android:id="@+id/text_chat_room_id"
+
+
+    <!-- 채팅방 정보 영역 -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="채팅방 ID: "
-        android:textSize="18sp"
-        android:padding="8dp" />
+        android:orientation="vertical"
+        android:background="@drawable/info_background"
+        android:padding="12dp"
+        android:layout_marginBottom="12dp">
 
-    <!-- 최고 입찰가 표시 -->
-    <TextView
-        android:id="@+id/text_highest_bid"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="최고 입찰가: 0원 (없음)"
-        android:textSize="16sp"
-        android:padding="8dp"
-        android:layout_marginBottom="8dp" />
 
-    <!-- 현재 가격 표시 -->
-    <TextView
-        android:id="@+id/pricetextview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="현재 가격: 0원"
-        android:textSize="16sp"
-        android:padding="8dp"
-        android:layout_marginBottom="8dp" />
+        <!-- 채팅방 ID -->
+        <TextView
+            android:id="@+id/text_chat_room_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="채팅방 ID: 12345"
+            android:textSize="18sp"
+            android:textColor="@color/primary_text"
+            android:fontFamily="sans-serif-medium"
+            android:background="@drawable/bordered_background"
+            android:padding="8dp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- 최고 입찰가 -->
+        <TextView
+            android:id="@+id/text_highest_bid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="최고 입찰가: 0원 (없음)"
+            android:textSize="16sp"
+            android:textColor="@color/secondary_text"
+            android:fontFamily="sans-serif"
+            android:background="@drawable/bordered_background"
+            android:padding="8dp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- 현재 가격 -->
+        <TextView
+            android:id="@+id/pricetextview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="현재 가격: 0원"
+            android:textSize="16sp"
+            android:textColor="@color/secondary_text1"
+            android:fontFamily="sans-serif"
+            android:background="@drawable/bordered_background"
+            android:padding="8dp" />
+    </LinearLayout>
 
     <!-- 채팅 메시지 표시 영역 -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginBottom="8dp">
+        android:background="@drawable/chat_background"
+        android:padding="8dp"
+        android:layout_marginBottom="12dp">
+
         <LinearLayout
-            android:orientation="vertical"
+            android:id="@+id/chat_message_area"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/chat_message_area">
-            <!-- 여기에 채팅 메시지가 동적으로 추가됨 -->
-        </LinearLayout>
+            android:orientation="vertical" />
     </ScrollView>
 
-    <!-- 채팅 메시지 입력 필드 -->
-    <EditText
-        android:id="@+id/edit_text_message"
+    <!-- 메시지 입력 영역 -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="메시지를 입력하세요"
-        android:inputType="text"
-        android:padding="10dp"
-        android:layout_marginBottom="8dp"/>
+        android:orientation="horizontal"
+        android:background="@drawable/input_background"
+        android:padding="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="4dp">
 
-    <!-- 메시지 전송 버튼 -->
-    <Button
-        android:id="@+id/btn_send_message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="전송"
-        android:layout_gravity="end"/>
+        <!-- 메시지 입력 필드 -->
+        <EditText
+            android:id="@+id/edit_text_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="메시지를 입력하세요"
+            android:background="@android:color/transparent"
+            android:inputType="text"
+            android:padding="10dp"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/primary_text1"
+            android:textSize="14sp" />
 
+        <!-- 메시지 전송 버튼 -->
+        <Button
+            android:id="@+id/btn_send_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="전송"
+            android:backgroundTint="@color/button_color"
+            android:textColor="@android:color/white"
+            android:paddingHorizontal="16dp"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="14sp" />
+    </LinearLayout>
 </LinearLayout>
