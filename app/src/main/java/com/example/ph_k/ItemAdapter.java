@@ -219,12 +219,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             public void onDeleteSuccess() {
                 itemList.remove(position);
                 notifyItemRemoved(position);
-                Toast.makeText(context, "게시글이 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                showCustomToast("게시글이 삭제되었습니다.");
             }
 
             @Override
             public void onDeleteFailure() {
-                Toast.makeText(context, "게시글 삭제에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                showCustomToast("게시글 삭제에 실패했습니다.");
             }
         });
     }
@@ -249,8 +249,29 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         });
     }
 
+
     public interface OnDeleteItemListener {
         void onDeleteSuccess();
         void onDeleteFailure();
     }
+    public void showCustomToast(String message) {
+        // 레이아웃 인플레이터를 사용하여 커스텀 레이아웃을 인플레이트
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View customView = inflater.inflate(R.layout.custom_toast, null);
+
+        // 커스텀 레이아웃의 TextView와 ImageView를 찾아 메시지와 로고 설정
+        TextView toastMessage = customView.findViewById(R.id.toast_message);
+        toastMessage.setText(message);
+
+        ImageView logo = customView.findViewById(R.id.toast_logo);
+        logo.setImageResource(R.mipmap.sap);
+
+        // Toast 객체 생성 및 표시
+        Toast customToast = new Toast(context);  // getApplicationContext() 대신 context 사용
+        customToast.setDuration(Toast.LENGTH_SHORT);  // Toast 표시 시간 설정
+        customToast.setView(customView);
+        customToast.show();
+    }
+
+
 }
