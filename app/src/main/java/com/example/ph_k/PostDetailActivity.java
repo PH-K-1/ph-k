@@ -3,6 +3,7 @@ package com.example.ph_k;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -42,6 +43,8 @@ public class PostDetailActivity extends AppCompatActivity {
     private int itemId;  // 게시글 ID
     private String itemUserId;  // 게시글 작성자의 ID
     private String loggedInUserId;  // 로그인한 사용자 ID
+
+    private String deadline; // deadline 값을 저장할 변수
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,8 +95,7 @@ public class PostDetailActivity extends AppCompatActivity {
         String price = intent.getStringExtra("price");
         itemUserId = intent.getStringExtra("item_Userid");  // 게시글 작성자의 ID
         ArrayList<String> imageUrlList = intent.getStringArrayListExtra("image_urls");
-        String deadline = intent.getStringExtra("deadline");  // 데드라인 값을 Intent로부터 받아옴
-
+        deadline = intent.getStringExtra("deadline"); // deadline 값 수신
         itemId = intent.getIntExtra("item_id", -1);  // 게시글의 itemId 받아오기
 
         titleTextView.setText(title);
@@ -186,8 +188,7 @@ public class PostDetailActivity extends AppCompatActivity {
                         }
                     },
                     error -> {
-                        // 에러 처리
-                        showCustomToast("서버 통신 실패");
+
                     }
             );
 
@@ -250,11 +251,29 @@ public class PostDetailActivity extends AppCompatActivity {
 
     // Buy 버튼 클릭 시 채팅 화면으로 이동
     private void navigateToChat() {
+        // 로그인된 사용자 ID가 null인 경우 로그인 화면으로 이동
+        if (loggedInUserId == null) {
+            showCustomToast("로그인 후 이용 가능합니다.");
+
+            // 로그인 화면으로 이동하는 Intent 생성
+            Intent loginIntent = new Intent(PostDetailActivity.this, LoginActivity.class); // LoginActivity는 로그인 화면 액티비티
+            startActivity(loginIntent);
+            finish(); // 현재 액티비티 종료
+            return;
+        }
+
+        // 로그인된 경우 채팅 화면으로 이동
         Intent chatIntent = new Intent(PostDetailActivity.this, ChatRoomActivity.class);
         chatIntent.putExtra("auctionId", String.valueOf(itemId));  // itemId를 auctionId로 전달
         chatIntent.putExtra("price", priceTextView.getText().toString());  // 가격 정보를 전달
+        chatIntent.putExtra("title", titleTextView.getText().toString());  // 제목 정보를 전달
+        Log.d("PostDetailActivity", "Title Text: " + titleTextView.getText().toString());
+        chatIntent.putStringArrayListExtra("imageUrls", new ArrayList<>(imageUrls));  // 이미지 URL 리스트 전달
+        chatIntent.putExtra("deadline", deadline);  // deadline 값 추가 전달
+
         startActivity(chatIntent);
     }
+
 
     // 커스텀 Toast 메서드
     // 커스텀 Toast 메서드

@@ -83,8 +83,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             intent.putExtra("title", item.getTitle());
             intent.putExtra("description", item.getDescription());
             intent.putExtra("price", formattedPrice + "원");
+            intent.putExtra("deadline", item.getDeadline()); // deadline 전달
             intent.putStringArrayListExtra("image_urls", new ArrayList<>(imageUrls));
-            intent.putExtra("deadline", deadline);  // 실제 deadline 값을 넣어야 합니다
             context.startActivity(intent);
         });
 
