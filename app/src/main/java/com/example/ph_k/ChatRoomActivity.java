@@ -50,8 +50,8 @@ public class ChatRoomActivity extends AppCompatActivity {
 
     private TextView deadlineTextView;
 
-    private static final String URL_CHAT_MESSAGES = "http://203.250.133.92:7310/get_chat_messages";
-    private static final String SOCKET_URL = "http://203.250.133.92:7310";
+    private static final String URL_CHAT_MESSAGES = "http://203.250.133.110:7310/get_chat_messages";
+    private static final String SOCKET_URL = "http://203.250.133.110:7310";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,7 +157,7 @@ public class ChatRoomActivity extends AppCompatActivity {
 
                             // UI에 메시지 추가
                             TextView newMessage = new TextView(this);
-                            newMessage.setText(userId + ": " + message + " (" + createdAt + ")");
+                            newMessage.setText(message + " (" + createdAt + ")");
                             chatMessageArea.addView(newMessage);
                         }
 
@@ -213,7 +213,7 @@ public class ChatRoomActivity extends AppCompatActivity {
 
             // 메시지를 UI에 추가
             TextView newMessage = new TextView(this);
-            newMessage.setText(userId + ": " + message + " (" + createdAt + ")");
+            newMessage.setText(message + " (" + createdAt + ")");
             chatMessageArea.addView(newMessage);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -234,41 +234,106 @@ public class ChatRoomActivity extends AppCompatActivity {
         }
     });
 
+
+    private int highestBidAmount = 0;  // 최고가를 관리하는 변수
+
     private void sendMessage(String message, String username, String auctionId, String price) {
         try {
-            JSONObject messageData = new JSONObject();
-            messageData.put("user_id", username);
-            messageData.put("auction_id", auctionId);
-            messageData.put("message", message);
-            messageData.put("price", price);  // 가격 정보 추가
-
             int bidAmount = 0;
+            int auctionStartPrice = 0;
+
+            // 사용자 입력값인 message가 숫자인지 확인하여 bidAmount에 저장
             try {
-                bidAmount = Integer.parseInt(message);
+                message = message.replaceAll("[^0-9]", "");
+                bidAmount = Integer.parseInt(message);  // 입력된 메시지를 숫자로 변환
             } catch (NumberFormatException e) {
                 // 숫자가 아닌 메시지일 경우 그대로 채팅 메시지로 전송
             }
 
-            if (bidAmount > 0) {
-                mSocket.emit("new_bid", messageData);
-
-                TextView newMessage = new TextView(this);
-                newMessage.setText(username + ": " + bidAmount + "원 (" + username + ")");
-                chatMessageArea.addView(newMessage);
-            } else {
-                mSocket.emit("new_message", messageData);
-
-                TextView newMessage = new TextView(this);
-                newMessage.setText(username + ": " + message);
-                chatMessageArea.addView(newMessage);
+            if (!message.matches("[0-9]+")) {
+                Toast.makeText(this, "숫자만 입력하세요.", Toast.LENGTH_SHORT).show();
+                return;
             }
 
-            // 입력 필드 초기화
+            // price에서 쉼표와 "원"을 제거 후 정수로 변환
+            if (price != null && !price.isEmpty()) {
+                price = price.replaceAll("[^0-9]", "");
+                try {
+                    auctionStartPrice = Integer.parseInt(price);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "유효한 시작가가 아닙니다.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } else {
+                Toast.makeText(this, "시작가 정보가 유효하지 않습니다.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // 입찰 금액이 시작가보다 작은 경우
+            if (bidAmount <= auctionStartPrice) {
+                Toast.makeText(this, "시작가보다 높은 금액을 입력해야 합니다.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // 입찰 금액이 최고가보다 작은 경우, 서버에서 최고가를 받아와서 확인
+            getHighestBidAndCheck(bidAmount, username, auctionId, message);
+
+            // 메시지 입력 필드 초기화
             editTextMessage.setText("");
-        } catch (JSONException e) {
+        } catch (Exception e) {  // 다른 예외를 처리할 경우
             e.printStackTrace();
+            Toast.makeText(this, "채팅 메시지 로드 오류", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void getHighestBidAndCheck(final int bidAmount, final String username, final String auctionId, final String message) {
+        // Volley 요청을 통해 서버에서 최고가 정보를 받아옴
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        String url = "http://203.250.133.110:7310/get_chat_messages?auction_id=" + auctionId;  // 서버 URL에 맞춰서 변경
+
+        StringRequest stringRequest = new StringRequest(com.android.volley.Request.Method.GET, url,
+                response -> {
+                    try {
+                        // 서버 응답에서 최고가와 최고 입찰자 정보를 추출
+                        JSONObject jsonResponse = new JSONObject(response);
+                        int highestBid = jsonResponse.getInt("highest_bid");
+
+                        // 최고가가 현재 입찰 금액보다 작은 경우에만 입찰 진행
+                        if (bidAmount > highestBid) {
+                            // 입찰 금액이 최고가보다 높은 경우
+                            highestBidAmount = bidAmount; // 최고가 갱신
+
+                            // 입찰 메시지 생성
+                            JSONObject messageData = new JSONObject();
+                            messageData.put("user_id", username);
+                            messageData.put("auction_id", auctionId);
+                            messageData.put("message", message);
+                            messageData.put("price", bidAmount);  // 입찰 금액을 가격으로 전달
+
+                            // 입찰 처리
+                            mSocket.emit("new_bid", messageData);  // 서버로 입찰 메시지 전송
+
+                            // 입찰되었습니다 토스트 메시지 추가
+                            Toast.makeText(this, "입찰되었습니다.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(this, "현재 최고가보다 높은 금액을 입력해야 합니다.", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(this, "서버에서 최고가 정보를 가져오는 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> {
+                    // 네트워크 오류 처리
+                    Toast.makeText(this, "서버 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                    error.printStackTrace();
+                });
+
+        // 요청을 큐에 추가
+        requestQueue.add(stringRequest);
+    }
+
 
     private void addItemAdapter(LinearLayout itemAdapterView, String title, String price, String deadline) {
         // 기존에 추가된 모든 아이템을 제거

@@ -14,7 +14,7 @@ android {
         versionName "1.0"
 
         // BASE_URL 설정
-        buildConfigField "String", "BASE_URL", '"http://203.250.133.92:7310"'
+        buildConfigField "String", "BASE_URL", '"http://203.250.133.110:7310"'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -48,6 +48,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.10.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
     implementation 'com.android.volley:volley:1.2.1'
+
 
     // Glide 이미지 로딩 라이브러리
     implementation 'com.github.bumptech.glide:glide:4.15.1'

@@ -142,7 +142,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="메시지를 입력하세요"
+            android:hint="숫자만 입력하세요"
             android:background="@android:color/transparent"
             android:inputType="text"
             android:padding="10dp"
